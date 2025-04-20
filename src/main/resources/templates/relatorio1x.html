@@ -7,7 +7,9 @@
           integrity="sha384-..." crossorigin="anonymous">
 </head>
 <body class="container mt-5">
-
+<div th:replace="~{fragments/menu :: layout(~{::section})}">
+    <section>
+    
     <h1 class="mb-4">Relatório de Clientes Ativos</h1>
 
     <!-- Tabela de clientes -->
@@ -74,6 +76,7 @@
     <div class="mt-4">
         <h4>Total de Clientes Ativos: <span th:text="${total}"></span></h4>
     </div>
-
+</section>
+</div>
 </body>
 </html>

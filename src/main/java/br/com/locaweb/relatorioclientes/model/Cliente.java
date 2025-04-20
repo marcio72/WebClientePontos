@@ -1,5 +1,7 @@
 package br.com.locaweb.relatorioclientes.model;
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -7,6 +9,7 @@ import jakarta.persistence.*;
 public class Cliente {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "cod_cliente")
     private Integer codCliente;
 
@@ -26,7 +29,7 @@ public class Cliente {
     private Integer regiao;
 
     @Column(name = "Dt_Cadastro")
-    private String dtCadastro;
+    private LocalDateTime dtCadastro;
 
     @Column(name = "Ativo")
     private Boolean ativo;
@@ -80,13 +83,14 @@ public class Cliente {
 		this.regiao = regiao;
 	}
 
-	public String getDtCadastro() {
-		return dtCadastro;
+	public LocalDateTime getDtCadastro() {
+	    return dtCadastro;
 	}
 
-	public void setDtCadastro(String dtCadastro) {
-		this.dtCadastro = dtCadastro;
+	public void setDtCadastro(LocalDateTime dtCadastro) {
+	    this.dtCadastro = dtCadastro;
 	}
+
 
 	public boolean getAtivo() {
 		return ativo;

@@ -6,6 +6,9 @@
 </head>
 <body class="bg-light">
 
+<div th:replace="~{fragments/menu :: layout(~{::section})}">
+    <section>
+
 <div class="container mt-5">
     <h1 class="mb-4 text-primary">Relatório de Clientes Ativos</h1>
 
@@ -96,6 +99,9 @@
         </div>
     </div>
 
+</div>
+
+</section>
 </div>
 
 </body>

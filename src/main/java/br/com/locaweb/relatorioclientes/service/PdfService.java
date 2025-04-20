@@ -98,15 +98,16 @@ public class PdfService {
                 });
 
             // Linhas
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+
             for (Cliente c : clientes) {
-                table.addCell(String.valueOf(c.getCodCliente()));
                 table.addCell(c.getNomCliente());
-                table.addCell(c.getLogradouro());
-                table.addCell(c.getTelefone());
                 table.addCell(c.getBairro());
+                table.addCell(c.getTelefone());
                 table.addCell(ConvertRegiao.exibirNome(c.getRegiao()));
-                table.addCell(c.getDtCadastro());
+                table.addCell(c.getDtCadastro().format(formatter)); // ✅ formatado
             }
+
 
             document.add(table);
             document.close();

@@ -1,17 +1,33 @@
 package br.com.locaweb.relatorioclientes.repository;
 
-import java.util.List;
-
-import org.springframework.data.jpa.repository.JpaRepository;
-
 import br.com.locaweb.relatorioclientes.model.Cliente;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.*;
+import org.springframework.data.repository.query.Param;
 
-
-
-import org.springframework.data.jpa.repository.JpaRepository;
+import java.time.LocalDate;
 import java.util.List;
 
-public interface ClienteRepository extends JpaRepository<Cliente, Long> {
-    // Método que encontra clientes ativos e ordena por cod_cliente e logradouro
+public interface ClienteRepository extends JpaRepository<Cliente, Integer> {
+
     List<Cliente> findByAtivoOrderByCodClienteAscLogradouroAsc(Boolean ativo);
+
+    Page<Cliente> findByNomClienteContainingIgnoreCaseAndAtivoTrue(String nome, Pageable pageable);
+
+    Page<Cliente> findByAtivoTrueOrderByCodClienteDesc(Pageable pageable);
+
+    Page<Cliente> findByNomClienteContainingIgnoreCaseAndAtivoTrueOrderByCodClienteDesc(String nome, Pageable pageable);
+
+    // ✅ Método com múltiplos filtros
+    @Query("SELECT c FROM Cliente c WHERE c.ativo = true "
+    	     + "AND (:nome IS NULL OR UPPER(c.nomCliente) LIKE UPPER(CONCAT('%', :nome, '%'))) "
+    	     + "AND (:dataInicio IS NULL OR DATE(c.dtCadastro) >= :dataInicio) "
+    	     + "AND (:dataFim IS NULL OR DATE(c.dtCadastro) <= :dataFim) "
+    	     + "ORDER BY c.codCliente DESC")
+    	Page<Cliente> findClientesFiltrados(@Param("nome") String nome,
+    	                                    @Param("dataInicio") LocalDate dataInicio,
+    	                                    @Param("dataFim") LocalDate dataFim,
+    	                                    Pageable pageable);
+
 }
