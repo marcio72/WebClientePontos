@@ -1,7 +1,11 @@
 package br.com.locaweb.relatorioclientes.controller;
 
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import br.com.locaweb.relatorioclientes.model.Cliente;
 import br.com.locaweb.relatorioclientes.model.HistoricoAlteracao;
+import br.com.locaweb.relatorioclientes.repository.ClienteRepository;
 import br.com.locaweb.relatorioclientes.service.ClienteService;
 import br.com.locaweb.relatorioclientes.util.ConvertRegiao;
 
@@ -18,6 +22,16 @@ import java.util.stream.Collectors;
 
 @Controller
 public class ClienteController {
+	
+	@Autowired
+    private ClienteRepository clienteRepository;
+
+    /*@GetMapping("/form-maquinas")
+    public String exibirFormulario(Model model) {
+        model.addAttribute("clientes", clienteRepository.findAll());
+        return "form-maquinas"; // Nome do HTML
+    }*/
+	
 
     @Autowired
     private ClienteService clienteService;

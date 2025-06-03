@@ -10,7 +10,7 @@ public class ConvertRegiao {
             case 4 -> "Oeste";
             case 5 -> "Centro";
             case 6 -> "ABC";
-            default -> "Desconhecida";
+            default -> "----";
         };
     }
 }

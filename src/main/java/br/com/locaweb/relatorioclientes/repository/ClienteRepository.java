@@ -8,16 +8,25 @@ import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
-public interface ClienteRepository extends JpaRepository<Cliente, Integer> {
+public interface ClienteRepository extends JpaRepository<Cliente, Long> {
+	List<Cliente> findAllByOrderByCodClienteDesc();
 
     List<Cliente> findByAtivoOrderByCodClienteAscLogradouroAsc(Boolean ativo);
 
+    //List<Cliente> cliente = clienteRepository.findById(id);
+    
     Page<Cliente> findByNomClienteContainingIgnoreCaseAndAtivoTrue(String nome, Pageable pageable);
 
     Page<Cliente> findByAtivoTrueOrderByCodClienteDesc(Pageable pageable);
 
     Page<Cliente> findByNomClienteContainingIgnoreCaseAndAtivoTrueOrderByCodClienteDesc(String nome, Pageable pageable);
+
+      //List<Cliente> findByAtivoTrue();
+      List<Cliente> findByAtivoTrueOrderByCodClienteDesc();
+
+    
 
     // ✅ Método com múltiplos filtros
     @Query("SELECT c FROM Cliente c WHERE c.ativo = true "
@@ -29,5 +38,4 @@ public interface ClienteRepository extends JpaRepository<Cliente, Integer> {
     	                                    @Param("dataInicio") LocalDate dataInicio,
     	                                    @Param("dataFim") LocalDate dataFim,
     	                                    Pageable pageable);
-
 }

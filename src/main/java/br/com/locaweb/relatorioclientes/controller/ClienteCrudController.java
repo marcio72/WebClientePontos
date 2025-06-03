@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Objects;
 
 
-
 @Controller
 @RequestMapping("/clientes")
 public class ClienteCrudController {
@@ -92,7 +91,7 @@ public class ClienteCrudController {
         // Repita para outros campos desejados
     }
 
-    private void salvarHistorico(Integer codCliente, String campo, String antigo, String atual) {
+    private void salvarHistorico(Long codCliente, String campo, String antigo, String atual) {
         HistoricoAlteracao h = new HistoricoAlteracao();
         h.setCodCliente(codCliente);
         h.setCampoAlterado(campo);
@@ -128,17 +127,15 @@ public class ClienteCrudController {
 
 
 
-
-
     @GetMapping("/editar/{id}")
-    public String editarCliente(@PathVariable Integer id, Model model) {
+    public String editarCliente(@PathVariable Long id, Model model) {
         Cliente cliente = clienteRepository.findById(id).orElseThrow();
         model.addAttribute("cliente", cliente);
         return "formulario-cliente";
     }
 
     @PostMapping("/excluir/{id}")
-    public String excluirCliente(@PathVariable Integer id) {
+    public String excluirCliente(@PathVariable Long id) {
         clienteRepository.deleteById(id);
         return "redirect:/clientes/listar";
     }

@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Solicitação de Manutenção</title>
+  <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAQAAAC1+jfqAAAArklEQVQoz4WRwQ2EMAwE78vI0lT9sbi3yNRRRCkCrS93MMLDI9j9iA1Qcp9cMZ7lvkyiTxUEmSeDJtyUAnsnF3LJtxYqkIkDuGp6JQqgdkHz8gRmdAjLZrw7HoFSUwRFLtqAjPl2egEv3zIF+lhAnRuv0wFq7cJYUnKk8tsGl2Yz1M8K7pbjKQeV/05Mp44ekPA3+wVNQaeM6R9oAAAAASUVORK5CYII=" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <script>
+    window.onload = function () {
+      fetch('http://localhost:8080/api/clientes')
+        .then(res => res.json())
+        .then(clientes => {
+          const clienteSelect = document.getElementById('cliente');
+          clientes.forEach(c => {
+            const opt = document.createElement('option');
+            opt.value = c.codCliente;
+            opt.textContent = `${c.codCliente} - ${c.nomCliente}`;
+            clienteSelect.appendChild(opt);
+          });
+        })
+        .catch(() => alert('Erro ao carregar clientes.'));
+    };
+
+    document.addEventListener('DOMContentLoaded', function () {
+      document.getElementById('cliente').addEventListener('change', function () {
+        const clienteId = this.value;
+        const maquinaSelect = document.getElementById('maquina_select');
+        maquinaSelect.innerHTML = '<option selected disabled>Escolha uma máquina</option>';
+
+        fetch(`http://localhost:8080/api/maquinas/por-cliente/${clienteId}`)
+          .then(res => res.json())
+          .then(maquinas => {
+            maquinas.forEach(m => {
+              const opt = document.createElement('option');
+              opt.value = m.id; // ✅ agora usa ID único
+              opt.textContent = `Maq. ${m.nom_maq}`; // ou m.maq, se quiser mostrar o número
+              maquinaSelect.appendChild(opt);
+            });
+          });
+      });
+    });
+
+    function adicionarMaquinaProblema() {
+      const select = document.getElementById('maquina_select');
+      const container = document.getElementById('problemas_container');
+      const selectedValue = select.value;
+      const selectedText = select.options[select.selectedIndex].text;
+
+      console.log("Verificando ID:", selectedValue);
+
+      if (!selectedValue || document.getElementById('maquina_' + selectedValue)) {
+        alert("Essa máquina já foi adicionada.");
+        return;
+      }
+
+      const div = document.createElement('div');
+      div.className = 'mb-3';
+      div.id = 'maquina_' + selectedValue;
+
+      div.innerHTML = `
+        <label class="form-label">${selectedText}</label>
+        <textarea class="form-control" name="problema_${selectedValue}" rows="2"
+          placeholder="Descreva o problema da máquina ${selectedText}"></textarea>
+        <button type="button" class="btn btn-sm btn-danger mt-1" onclick="removerProblema('${selectedValue}')">
+          <i class="bi bi-x-circle"></i> Remover
+        </button>
+      `;
+
+      container.appendChild(div);
+      select.selectedIndex = 0;
+    }
+
+    function removerProblema(id) {
+      const div = document.getElementById('maquina_' + id);
+      if (div) div.remove();
+    }
+
+    function enviarSolicitacao(event) {
+      event.preventDefault();
+
+      const clienteId = document.getElementById('cliente').value;
+      const dataSolicitacao = document.getElementById('data_solicitacao').value;
+
+      const problemas = [];
+      const container = document.getElementById('problemas_container');
+      const divs = container.querySelectorAll('div');
+
+      divs.forEach(div => {
+        const maquinaId = div.id.replace('maquina_', '');
+        const descricao = div.querySelector('textarea').value;
+        if (descricao.trim()) {
+          problemas.push({
+            numeroMaquina: maquinaId,
+            descricao: descricao
+          });
+        }
+      });
+
+      if (!clienteId || !dataSolicitacao || problemas.length === 0) {
+        alert("Preencha todos os campos e adicione pelo menos uma máquina com problema.");
+        return;
+      }
+
+      const solicitacao = {
+        cliente: clienteId,
+        dataSolicitacao: dataSolicitacao,
+        status: true,
+        problemas: problemas
+      };
+
+      fetch('http://localhost:8080/api/solicitacao', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(solicitacao)
+      })
+      .then(res => {
+        if (res.ok) {
+          alert("Solicitação enviada com sucesso!");
+
+          // LIMPA O FORMULÁRIO
+          document.getElementById('cliente').selectedIndex = 0;
+          document.getElementById('maquina_select').innerHTML = '<option selected disabled>Escolha uma máquina</option>';
+          document.getElementById('problemas_container').innerHTML = '';
+          document.getElementById('data_solicitacao').value = '';
+
+          setTimeout(() => {
+            document.getElementById('problemas_container').innerHTML = '';
+          }, 100);
+
+        } else {
+          alert("Erro ao enviar solicitação.");
+        }
+      })
+      .catch(() => alert("Erro de conexão com a API."));
+    }
+  </script>
+</head>
+<body class="bg-light">
+  <div class="container py-5">
+    <div class="card shadow rounded-4">
+      <div class="card-header bg-warning">
+        <h5 class="mb-0"><i class="bi bi-tools"></i> Solicitar Manutenção</h5>
+      </div>
+      <div class="card-body">
+        <form onsubmit="enviarSolicitacao(event)">
+          <div class="mb-3">
+            <label for="cliente" class="form-label">Cliente</label>
+            <select id="cliente" class="form-select">
+              <option selected>Selecione o cliente...</option>
+            </select>
+          </div>
+
+          <div class="row mb-3">
+            <div class="col-md-10">
+              <label for="maquina_select" class="form-label">Máquina</label>
+              <select id="maquina_select" class="form-select">
+                <option selected disabled>Escolha uma máquina</option>
+              </select>
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+              <button type="button" onclick="adicionarMaquinaProblema()" class="btn btn-secondary w-100">
+                <i class="bi bi-plus-circle"></i> Adicionar
+              </button>
+            </div>
+          </div>
+
+          <div id="problemas_container"></div>
+
+          <div class="mb-3">
+            <label for="data_solicitacao" class="form-label">Data da Solicitação</label>
+            <input type="date" class="form-control" id="data_solicitacao">
+          </div>
+
+          <div class="text-end">
+            <button type="submit" class="btn btn-warning"><i class="bi bi-send-check"></i> Enviar Solicitação</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

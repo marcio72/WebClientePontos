@@ -11,7 +11,7 @@ public class Cliente {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "cod_cliente")
-    private Integer codCliente;
+    private Long codCliente;
 
     @Column(name = "nom_cliente")
     private String nomCliente;
@@ -24,8 +24,17 @@ public class Cliente {
 
     @Column(name = "bai")
     private String bairro;
+    
+    @Column(name = "cont")
+    private String contato;
 
-    @Column(name = "regiao")
+    
+
+	public void setAtivo(Boolean ativo) {
+		this.ativo = ativo;
+	}
+
+	@Column(name = "regiao")
     private Integer regiao;
 
     @Column(name = "Dt_Cadastro")
@@ -35,11 +44,11 @@ public class Cliente {
     private Boolean ativo;
 
 
-    public Integer getCodCliente() {
+    public Long getCodCliente() {
 		return codCliente;
 	}
 
-	public void setCodCliente(Integer codCliente) {
+	public void setCodCliente(Long codCliente) {
 		this.codCliente = codCliente;
 	}
 
@@ -69,6 +78,15 @@ public class Cliente {
 
 	public String getBairro() {
 		return bairro;
+	}
+	
+
+	public String getContato() {
+		return contato;
+	}
+
+	public void setContato(String contato) {
+		this.contato = contato;
 	}
 
 	public void setBairro(String bairro) {

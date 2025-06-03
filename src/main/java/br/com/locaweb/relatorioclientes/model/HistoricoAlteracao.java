@@ -15,12 +15,10 @@ public class HistoricoAlteracao {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-   
-    
+    private Long id; 
     
     @Column(name = "cod_cliente")
-    private Integer codCliente;
+    private Long codCliente;
 
     public Long getId() {
 		return id;
@@ -30,11 +28,11 @@ public class HistoricoAlteracao {
 		this.id = id;
 	}
 
-	public Integer getCodCliente() {
+	public Long getCodCliente() {
 		return codCliente;
 	}
 
-	public void setCodCliente(Integer codCliente) {
+	public void setCodCliente(Long codCliente) {
 		this.codCliente = codCliente;
 	}
 	private String campoAlterado;

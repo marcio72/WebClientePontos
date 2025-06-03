@@ -1,5 +1,8 @@
 package br.com.locaweb.relatorioclientes.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 import br.com.locaweb.relatorioclientes.service.ClienteService;
 import br.com.locaweb.relatorioclientes.service.PdfService;
 import org.springframework.beans.factory.annotation.Autowired;
