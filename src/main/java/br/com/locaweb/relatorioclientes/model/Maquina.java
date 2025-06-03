@@ -13,12 +13,15 @@ import lombok.Setter;
 
 
 
-@Getter
-@Setter
+
 
 
 @Entity
 @Table(name = "maquina")
+
+@Getter
+@Setter
+
 public class Maquina {
 
 

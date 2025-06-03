@@ -28,6 +28,5 @@ public class ExecucaoManutencao {
     @ManyToOne
     @JoinColumn(name = "solicitacao_id")
     private SolicitacaoManutencao solicitacao;
-
 }
 
