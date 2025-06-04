@@ -20,10 +20,12 @@ public class FormularioController {
 
         return "form-maquinas";
     }
-     @GetMapping("/form_solicitacao")
-     public String exibirFormularioSolicitacao() {
-            return "form_solicitacao";
+    @GetMapping("/form_solicitacao")
+    public String exibirFormularioSolicitacao(Model model) {
+        model.addAttribute("clientes", clienteRepository.findByAtivoTrueOrderByCodClienteDesc(null));
+        return "form_solicitacao";
     }
+
      
      @GetMapping("/form_cadmaq")
      public String exibirFormularioCadastro() {
