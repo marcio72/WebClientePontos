@@ -12,10 +12,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 
-
-
-
-
 @Entity
 @Table(name = "maquina")
 
@@ -44,9 +40,4 @@ private String numeroPlaca;
 private String obs;
 
 private Integer codCliente;
-
-
-
-	
-
 }

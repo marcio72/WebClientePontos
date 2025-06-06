@@ -25,6 +25,7 @@ public interface ClienteRepository extends JpaRepository<Cliente, Long> {
 
       //List<Cliente> findByAtivoTrue();
       List<Cliente> findByAtivoTrueOrderByCodClienteDesc();
+      List<Cliente> findByAtivoTrue();  // <-- Adicione esta linha
 
     
 

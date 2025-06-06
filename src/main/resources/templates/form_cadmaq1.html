@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Cadastro de Cliente</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Cadastro de Máquinas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+<div th:replace="~{fragments/menu :: layout(~{::section})}">
+    <section>
+
+<div class="container mt-5">
+    <h2 class="mb-4">Cadastro de Máquinas</h2>
+
+    <form th:action="@{/maquinas/salvar}" method="post" th:object="${maquina}">
+
+        <div class="row g-3">
+        
+        <!-- Equipamento do Cliente -->
+            <div class="col-md-12">
+    			<label class="form-label">Cliente</label>
+    			<select th:field="*{codCliente}" class="form-select">
+    				<option value="">Selecione um cliente</option>
+    				<option th:each="cliente : ${clientes}"
+            				th:value="${cliente.codCliente}"
+            				th:text="${cliente.nomCliente}"></option>
+				</select>
+
+			</div>
+
+
+            <!-- ID -->
+            <div class="col-md-4">
+                <label class="form-label">ID</label>
+                <input type="text" class="form-control bg-primary text-white" name="id" readonly>
+            </div>
+
+            <!-- Jogo -->
+            <div class="col-md-4">
+                <label class="form-label">Jogo</label>
+                <div class="input-group">
+                    <select class="form-select" name="jogo">
+                        <option value="">Selecione o Jogo</option>
+                        <option value="Jogo1">Jogo 1</option>
+                        <option value="Jogo2">Jogo 2</option>
+                    </select>
+                    <button class="btn btn-outline-secondary" type="button"><i class="bi bi-plus-circle"></i></button>
+                </div>
+            </div>
+
+            <!-- Modelo Placa -->
+            <div class="col-md-4">
+                <label class="form-label">Modelo Placa</label>
+                <div class="input-group">
+                    <select class="form-select" name="modeloPlaca">
+                        <option value="">Selecione a Placa</option>
+                        <option value="Placa1">Placa 1</option>
+                        <option value="Placa2">Placa 2</option>
+                    </select>
+                    <button class="btn btn-outline-secondary" type="button"><i class="bi bi-plus-circle"></i></button>
+                </div>
+            </div>
+
+            <!-- Coletor -->
+            <div class="col-md-4">
+                <label class="form-label">Coletor</label>
+                <div class="input-group">
+                    <select class="form-select" name="coletor">
+                        <option value="">Selecione o Coletor</option>
+                        <option value="Coletor1">Coletor 1</option>
+                        <option value="Coletor2">Coletor 2</option>
+                    </select>
+                    <button class="btn btn-outline-secondary" type="button"><i class="bi bi-plus-circle"></i></button>
+                </div>
+            </div>
+
+            <!-- Gabinete -->
+            <div class="col-md-4">
+                <label class="form-label">Gabinete</label>
+                <div class="input-group">
+                    <select class="form-select" name="gabinete">
+                        <option value="">Selecionar Gabinete</option>
+                        <option value="G1">Gabinete 1</option>
+                        <option value="G2">Gabinete 2</option>
+                    </select>
+                    <button class="btn btn-outline-secondary" type="button"><i class="bi bi-plus-circle"></i></button>
+                </div>
+            </div>
+
+            <!-- Monitor -->
+            <div class="col-md-4">
+                <label class="form-label">Monitor</label>
+                <div class="input-group">
+                    <select class="form-select" name="monitor">
+                        <option value="">Selecionar o Monitor</option>
+                        <option value="Monitor1">Monitor 1</option>
+                        <option value="Monitor2">Monitor 2</option>
+                    </select>
+                    <button class="btn btn-outline-secondary" type="button"><i class="bi bi-plus-circle"></i></button>
+                </div>
+            </div>
+
+            <!-- Cadeado Tampa -->
+            <div class="col-md-3">
+                <label class="form-label">Cadeado Tampa</label>
+                <select class="form-select" name="cadeadoTampa">
+                    <option>Cadeado 1</option>
+                    <option>Cadeado 2</option>
+                </select>
+            </div>
+
+            <!-- Cadeado Cofre -->
+            <div class="col-md-3">
+                <label class="form-label">Cadeado Cofre</label>
+                <select class="form-select" name="cadeadoCofre">
+                    <option>Cadeado 1</option>
+                    <option>Cadeado 2</option>
+                </select>
+            </div>
+
+            <!-- Chave Tampa -->
+            <div class="col-md-3">
+                <label class="form-label">Chave Tampa</label>
+                <select class="form-select" name="chaveTampa">
+                    <option>Chave Tampa</option>
+                    <option>Chave T2</option>
+                </select>
+            </div>
+
+            <!-- Chave Cofre -->
+            <div class="col-md-3">
+                <label class="form-label">Chave Cofre</label>
+                <select class="form-select" name="chaveCofre">
+                    <option>Chave Cofre</option>
+                    <option>Chave C2</option>
+                </select>
+            </div>
+
+            <!-- Botão salvar -->
+            <div class="col-12">
+                <button type="submit" class="btn btn-success mt-3">Salvar</button>
+            </div>
+        </div>
+    </form>
+    </section>
+</div>
+
+</body>
+</html>

@@ -1,20 +1,27 @@
 
 package br.com.locaweb.relatorioclientes.controller;
 
+import br.com.locaweb.relatorioclientes.model.Cliente;
 import br.com.locaweb.relatorioclientes.model.Maquina;
+import br.com.locaweb.relatorioclientes.repository.ClienteRepository;
 import br.com.locaweb.relatorioclientes.repository.MaquinaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController
+@Controller
 @RequestMapping("/maquinas")
 public class MaquinaCrudController {
 
     @Autowired
     private MaquinaRepository maquinaRepository;
+    
+    @Autowired
+    private ClienteRepository clienteRepository;
 
     @GetMapping("/listar")
     public List<Maquina> listarTodas() {
@@ -30,11 +37,25 @@ public class MaquinaCrudController {
         }
         return ResponseEntity.ok(maquinas); // retorna 200 com a lista de máquinas
     }
+    @GetMapping("/form")
+    public String exibirFormularioCadastro(Model model) {
+        model.addAttribute("maquina", new Maquina()); // <- ESSENCIAL
+        model.addAttribute("clientes", clienteRepository.findByAtivoTrueOrderByCodClienteDesc()); // para popular o select
+        return "form_cadmaq";
+    }
+
     
     @PostMapping("/cadastrar")
     public Maquina cadastrar(@RequestBody Maquina maquina) {
         return maquinaRepository.save(maquina);
     }
+    @PostMapping("/salvar")
+    public String salvarViaFormulario(@ModelAttribute Maquina maquina) {
+        maquinaRepository.save(maquina);
+        return "redirect:/maquinas/form"; // ou outra página de confirmação
+    }
+
+
     
     @PutMapping("/editar/{id}")
     public ResponseEntity<Maquina> editarMaquina(@PathVariable Integer id, @RequestBody Maquina novaMaquina) {
@@ -61,6 +82,7 @@ public class MaquinaCrudController {
                 })
                 .orElse(ResponseEntity.notFound().build()); // 404 Not Found
     }
+    
     
     
     

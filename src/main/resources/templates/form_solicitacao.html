@@ -35,7 +35,7 @@
             maquinas.forEach(m => {
               const opt = document.createElement('option');
               opt.value = m.id; // ✅ agora usa ID único
-              opt.textContent = `Maq. ${m.nom_maq}`; // ou m.maq, se quiser mostrar o número
+              opt.textContent = `Maq. ${m.nom_maq} - ${m.nom_jogo}`; // ou m.maq, se quiser mostrar o número
               maquinaSelect.appendChild(opt);
             });
           });
