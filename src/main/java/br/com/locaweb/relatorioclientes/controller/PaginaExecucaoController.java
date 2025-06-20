@@ -8,6 +8,6 @@ public class PaginaExecucaoController {
 
     @GetMapping("/form_execucao")
     public String mostrarPaginaExecucao() {
-        return "Form_execucao"; // corresponde ao form_execucao.html em /templates
+        return "form_execucao";
     }
 }
