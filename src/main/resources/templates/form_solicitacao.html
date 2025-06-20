@@ -38,6 +38,7 @@
               opt.textContent = `Maq. ${m.nom_maq} - ${m.nom_jogo}`; // ou m.maq, se quiser mostrar o número
               maquinaSelect.appendChild(opt);
             });
+            
           });
       });
     });
@@ -66,6 +67,12 @@
         <button type="button" class="btn btn-sm btn-danger mt-1" onclick="removerProblema('${selectedValue}')">
           <i class="bi bi-x-circle"></i> Remover
         </button>
+          
+          <button type="button" class="btn btn-sm btn-success mt-1" onclick="">
+          <i class="bi bi-check-circle"></i>
+
+        </button>
+          
       `;
 
       container.appendChild(div);

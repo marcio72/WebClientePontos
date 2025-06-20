@@ -1,0 +1,50 @@
+package br.com.locaweb.relatorioclientes.DTO;
+
+import java.util.List;
+
+public class SolicitacaoResponseDTO {
+	private String cliente;
+    private List<ProblemaDTO> problemas;
+
+    // Getters e Setters
+    public String getCliente() {
+        return cliente;
+    }
+
+    public void setCliente(String cliente) {
+        this.cliente = cliente;
+    }
+
+    public List<ProblemaDTO> getProblemas() {
+        return problemas;
+    }
+
+    public void setProblemas(List<ProblemaDTO> problemas) {
+        this.problemas = problemas;
+    }
+
+    public static class ProblemaDTO {
+    	 private String maquina;
+    	private String descricao;
+    	
+    	public String getMaquina() {
+            return maquina;
+        }
+
+        public void setMaquina(String maquina) {
+            this.maquina = maquina;
+        }
+       
+
+        public String getDescricao() {
+            return descricao;
+        }
+
+        public void setDescricao(String descricao) {
+            this.descricao = descricao;
+        }
+
+        
+    }
+	
+}

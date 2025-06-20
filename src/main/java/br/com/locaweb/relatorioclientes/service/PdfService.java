@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.io.ByteArrayOutputStream;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -88,6 +89,8 @@ public class PdfService {
             PdfPTable table = new PdfPTable(7); // 7 colunas
             table.setWidthPercentage(100);
             table.setSpacingBefore(10f);
+            table.setWidths(new float[] { 0.8f, 3.0f, 2.3f, 1.5f, 1.5f, 1.2f, 2.0f });
+
 
             // Cabeçalhos
             Stream.of("Código", "Nome", "Logradouro", "Telefone", "Bairro", "Região", "Data Cadastro")
@@ -99,11 +102,19 @@ public class PdfService {
 
             // Linhas
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
-
+            clientes.sort(
+            	    Comparator
+            	        .comparing(Cliente::getRegiao) // pode ser um int ou enum
+            	        .thenComparing(Cliente::getNomCliente, String.CASE_INSENSITIVE_ORDER)
+            	);
+            
+            
             for (Cliente c : clientes) {
-                table.addCell(c.getNomCliente());
-                table.addCell(c.getBairro());
-                table.addCell(c.getTelefone());
+            	table.addCell (String.valueOf(c.getCodCliente()));
+            	table.addCell(c.getNomCliente());
+            	table.addCell(c.getLogradouro()) ;
+            	table.addCell(c.getTelefone());
+            	table.addCell(c.getBairro());
                 table.addCell(ConvertRegiao.exibirNome(c.getRegiao()));
                 table.addCell(c.getDtCadastro().format(formatter)); // ✅ formatado
             }

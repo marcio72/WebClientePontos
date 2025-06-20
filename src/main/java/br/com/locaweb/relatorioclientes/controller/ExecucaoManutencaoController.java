@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import br.com.locaweb.relatorioclientes.model.ExecucaoManutencao;
 import br.com.locaweb.relatorioclientes.model.SolicitacaoManutencao;
@@ -68,8 +69,6 @@ public class ExecucaoManutencaoController {
 	        model.addAttribute("execucao", execucao);
 	        return "form_execucao";
 	    }
-
-
 	    
 	}
 

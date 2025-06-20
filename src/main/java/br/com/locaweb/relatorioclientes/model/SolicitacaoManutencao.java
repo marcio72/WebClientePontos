@@ -8,6 +8,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 @Entity
 @Table(name = "solicitacao_manutencao")
 @Getter
@@ -23,7 +25,7 @@ public class SolicitacaoManutencao {
     private Cliente cliente;
     
 
-
+    @JsonFormat(pattern = "dd/MM/yyyy")
     @Column(name = "data_solicitacao")
     private LocalDate dataSolicitacao;
 
