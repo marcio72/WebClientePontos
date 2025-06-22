@@ -37,12 +37,15 @@ public class SolicitacaoController {
     @Autowired
     private SolicitacaoManutencaoRepository solicitacaoRepo;
 
+    
+    
+
     @PostMapping
     public ResponseEntity<?> criar(@RequestBody SolicitacaoDTO dto) {
         SolicitacaoManutencao solicitacao = new SolicitacaoManutencao();
         solicitacao.setCliente(clienteRepository.findById(dto.getCliente()).orElseThrow());
         solicitacao.setDataSolicitacao(dto.getDataSolicitacao());
-        solicitacao.setStatus(dto.getStatus());
+        solicitacao.setStatus(dto.getStatus().TRUE);
 
         List<ProblemaMaquina> problemas = dto.getProblemas().stream().map(p -> {
             ProblemaMaquina problema = new ProblemaMaquina();
@@ -61,16 +64,21 @@ public class SolicitacaoController {
     
     @GetMapping
     public ResponseEntity<List<SolicitacaoResponseDTO>> listarSolicitacoesComProblemas() {
-        List<SolicitacaoResponseDTO> resultado = solicitacaoRepo.findAll().stream().map(s -> {
+        List<SolicitacaoResponseDTO> resultado = solicitacaoRepo.findByStatusTrue().stream().map(s -> {
             SolicitacaoResponseDTO dto = new SolicitacaoResponseDTO();
+            dto.setId(s.getId()); // <-- ESSENCIAL para funcionar o select
+
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-            dto.setCliente(s.getCliente().getNomCliente() + " - " + s.getDataSolicitacao().format(formatter) );
+            dto.setCliente(s.getCliente().getNomCliente() + " - " + s.getDataSolicitacao().format(formatter));
+            dto.setStatus(s.getStatus()); // opcional, se quiser mostrar na tela
+            
+            
 
             List<SolicitacaoResponseDTO.ProblemaDTO> problemas = s.getProblemas().stream().map(p -> {
                 SolicitacaoResponseDTO.ProblemaDTO problemaDTO = new SolicitacaoResponseDTO.ProblemaDTO();
-                problemaDTO.setMaquina(p.getMaquina().getNom_maq() + " - " + p.getMaquina().getNom_jogo()); // Verifique se existe esse método em Maquina
+                problemaDTO.setMaquina(p.getMaquina().getNom_maq() + " - " + p.getMaquina().getNom_jogo());
                 problemaDTO.setDescricao(p.getDescricao());
-                
+                problemaDTO.setIdProblema(p.getId()); // ID do problema
                 return problemaDTO;
             }).collect(Collectors.toList());
 

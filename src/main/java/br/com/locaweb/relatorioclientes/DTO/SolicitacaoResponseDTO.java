@@ -3,8 +3,36 @@ package br.com.locaweb.relatorioclientes.DTO;
 import java.util.List;
 
 public class SolicitacaoResponseDTO {
+	
+	private Long id;
+	private Long idProblema; // novo campo!
+	public Long getIdProblema() {
+		return idProblema;
+	}
+
+	public void setIdProblema(Long idProblema) {
+		this.idProblema = idProblema;
+	}
+
 	private String cliente;
-    private List<ProblemaDTO> problemas;
+	private Boolean status;
+    public Boolean getStatus() {
+		return status;
+	}
+
+	 public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	 public void setStatus(Boolean status) {
+		 this.status = status;
+	 }
+
+	private List<ProblemaDTO> problemas;
 
     // Getters e Setters
     public String getCliente() {
@@ -24,7 +52,12 @@ public class SolicitacaoResponseDTO {
     }
 
     public static class ProblemaDTO {
-    	 private String maquina;
+    	private Long idProblema; // novo campo!
+    	 public Long getIdProblema() {
+			return idProblema;
+		}
+
+		 private String maquina;
     	private String descricao;
     	
     	public String getMaquina() {
@@ -43,6 +76,11 @@ public class SolicitacaoResponseDTO {
         public void setDescricao(String descricao) {
             this.descricao = descricao;
         }
+
+        public void setIdProblema(Long id) {
+            this.idProblema = id;
+        }
+
 
         
     }

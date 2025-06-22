@@ -7,17 +7,22 @@ import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import br.com.locaweb.relatorioclientes.DTO.ExecucaoRequestDTO;
 import br.com.locaweb.relatorioclientes.model.ExecucaoManutencao;
+import br.com.locaweb.relatorioclientes.model.ProblemaMaquina;
 import br.com.locaweb.relatorioclientes.model.SolicitacaoManutencao;
 import br.com.locaweb.relatorioclientes.repository.ExecucaoManutencaoRepository;
+import br.com.locaweb.relatorioclientes.repository.ProblemaRepository;
 import br.com.locaweb.relatorioclientes.repository.SolicitacaoManutencaoRepository;
 //import ch.qos.logback.core.model.Model;
 import org.springframework.ui.Model;
@@ -33,6 +38,10 @@ public class ExecucaoManutencaoController {
 
 	    @Autowired
 	    private SolicitacaoManutencaoRepository solicitacaoRepo;
+	    
+	    @Autowired
+	    private ProblemaRepository problemaRepository;
+
 
 	   /* @GetMapping("/nova/{idSolicitacao}")
 	    public String novaExecucao1(@PathVariable Long idSolicitacao, Model model) {
@@ -69,6 +78,31 @@ public class ExecucaoManutencaoController {
 	        model.addAttribute("execucao", execucao);
 	        return "form_execucao";
 	    }
+	    
+	    @PostMapping("/execucao")
+	    public ResponseEntity<?> registrarExecucao(@RequestBody List<ExecucaoRequestDTO> execucoes) {
+	        for (ExecucaoRequestDTO dto : execucoes) {
+	            ProblemaMaquina problema = problemaRepository.findById(dto.getProblemaId()).orElseThrow();
+	            
+
+	            ExecucaoManutencao execucao = new ExecucaoManutencao();
+	            execucao.setProblema(problema);
+	            execucao.setDataExecucao(dto.getDataExecucao());
+	            execucao.setTecnico(dto.getTecnico());
+	            execucao.setDescricao(dto.getDescricao());
+	          
+	            execucaoRepo.save(execucao);
+	        }
+
+	        // Depois de registrar todas execuções, atualiza a solicitação
+	        Long solicitacaoId = execucoes.get(0).getSolicitacaoId(); // você envia isso no DTO
+	        SolicitacaoManutencao solicitacao = solicitacaoRepo.findById(solicitacaoId).orElseThrow();
+	        solicitacao.setStatus(false);
+	        solicitacaoRepo.save(solicitacao);
+
+	        return ResponseEntity.ok().build();
+	    }
+
 	    
 	}
 
