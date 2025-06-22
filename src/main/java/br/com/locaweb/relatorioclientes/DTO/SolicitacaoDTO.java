@@ -13,7 +13,6 @@ import lombok.Setter;
 
 public class SolicitacaoDTO {
     private Long cliente;
-    @JsonFormat(pattern = "dd/MM/yyyy")
     private LocalDate dataSolicitacao;
     private Boolean status;
     private List<ProblemaDTO> problemas;

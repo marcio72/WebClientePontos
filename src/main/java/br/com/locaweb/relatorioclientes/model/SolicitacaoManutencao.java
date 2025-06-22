@@ -25,7 +25,6 @@ public class SolicitacaoManutencao {
     private Cliente cliente;
     
 
-    @JsonFormat(pattern = "dd/MM/yyyy")
     @Column(name = "data_solicitacao")
     private LocalDate dataSolicitacao;
 
