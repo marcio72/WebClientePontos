@@ -12,28 +12,89 @@
       align-items: center;
       justify-content: center;
       min-height: 100vh;
-      background-color: #f8f9fa;
+      transition: background-color 0.3s, color 0.3s;
     }
+
     .menu-container {
       max-width: 400px;
       width: 100%;
       padding: 20px;
       border-radius: 12px;
-      background-color: white;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      transition: background-color 0.3s, color 0.3s;
     }
+
     .menu-btn {
       margin-bottom: 15px;
     }
+
+    /* Tema Claro */
+    body.light {
+      background-color: #f8f9fa;
+      color: #212529;
+    }
+
+    .light .menu-container {
+      background-color: #ffffff;
+    }
+
+    /* Tema Escuro */
+    body.dark {
+      background-color: #121212;
+      color: #ffffff;
+    }
+
+    .dark .menu-container {
+      background-color: #1f1f1f;
+    }
+
+    .theme-toggle {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+    }
+
+    /* Evita mudança de cor dos botões */
+    .menu-container .btn {
+      color: inherit;
+    }
   </style>
 </head>
-<body>
+<body class="dark">
+
+  <button class="btn btn-outline-light theme-toggle" onclick="toggleTheme()" title="Alternar tema">
+    <i class="bi bi-moon-fill" id="themeIcon"></i>
+  </button>
+
   <div class="menu-container text-center">
     <h3 class="mb-4">Menu Principal</h3>
-    <a href="/form_solicitacao" class="btn btn-warning  w-100 menu-btn"> <i class="bi bi-tools"></i> Nova Solicitação</a>
-    <a href="/form_execucao" class="btn btn-success w-100 menu-btn"> <i class="bi bi-check-square"></i> Executar Manutenção</a>
-    <a href="/solicitacoes_abertas" class="btn btn-primary w-100 menu-btn">Solicitações Abertas</a>
-    <a href="/relatorio_execucoes" class="btn btn-info w-100">Solicitações Executadas</a>
+    <a href="/form_solicitacao" class="btn btn-warning w-100 menu-btn">
+      <i class="bi bi-tools"></i> Nova Solicitação
+    </a>
+    <a href="/form_execucao" class="btn btn-success w-100 menu-btn">
+      <i class="bi bi-check-square"></i> Executar Manutenção
+    </a>
+    <a href="/solicitacoes_abertas" class="btn btn-primary w-100 menu-btn">
+      Solicitações Abertas
+    </a>
+    <a href="#" class="btn btn-info w-100 disabled" aria-disabled="true">
+      Solicitações Executadas
+    </a>
   </div>
+
+  <script>
+    function toggleTheme() {
+      const body = document.body;
+      const icon = document.getElementById("themeIcon");
+      body.classList.toggle("dark");
+      body.classList.toggle("light");
+
+      if (body.classList.contains("light")) {
+        icon.classList.replace("bi-moon-fill", "bi-sun-fill");
+      } else {
+        icon.classList.replace("bi-sun-fill", "bi-moon-fill");
+      }
+    }
+  </script>
 </body>
 </html>
