@@ -6,6 +6,8 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,13 +16,16 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.locaweb.relatorioclientes.DTO.SolicitacaoDTO;
 import br.com.locaweb.relatorioclientes.DTO.SolicitacaoResponseDTO;
+import br.com.locaweb.relatorioclientes.model.ExecucaoManutencao;
 import br.com.locaweb.relatorioclientes.model.ProblemaMaquina;
 import br.com.locaweb.relatorioclientes.model.SolicitacaoManutencao;
 
 
 
 import br.com.locaweb.relatorioclientes.repository.SolicitacaoManutencaoRepository;
+import br.com.locaweb.relatorioclientes.repository.SolicitacaoRepository;
 import br.com.locaweb.relatorioclientes.repository.ClienteRepository;
+import br.com.locaweb.relatorioclientes.repository.ExecucaoRepository;
 import br.com.locaweb.relatorioclientes.repository.MaquinaRepository;
 
 
@@ -36,7 +41,10 @@ public class SolicitacaoController {
 
     @Autowired
     private SolicitacaoManutencaoRepository solicitacaoRepo;
-
+    
+    
+    
+     
     
     
 
