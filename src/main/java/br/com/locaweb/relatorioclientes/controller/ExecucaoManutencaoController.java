@@ -57,7 +57,7 @@ public class ExecucaoManutencaoController {
 	        execucao.setDataExecucao(LocalDate.now());
 
 	        // Atualiza status da solicitação para 'false' (resolvida)
-	        SolicitacaoManutencao solicitacao = execucao.getSolicitacao();
+	        SolicitacaoManutencao solicitacao = execucao.getSolicitacaoManutencao();
 	        solicitacao.setStatus(false);
 	        solicitacaoRepo.save(solicitacao);
 
@@ -73,7 +73,7 @@ public class ExecucaoManutencaoController {
 	        solicitacao.getCliente().getNomCliente();
 
 	        ExecucaoManutencao execucao = new ExecucaoManutencao();
-	        execucao.setSolicitacao(solicitacao);
+	        execucao.setSolicitacaoManutencao(solicitacao);
 
 	        model.addAttribute("execucao", execucao);
 	        return "form_execucao";
@@ -83,19 +83,20 @@ public class ExecucaoManutencaoController {
 	    public ResponseEntity<?> registrarExecucao(@RequestBody List<ExecucaoRequestDTO> execucoes) {
 	        for (ExecucaoRequestDTO dto : execucoes) {
 	            ProblemaMaquina problema = problemaRepository.findById(dto.getProblemaId()).orElseThrow();
-	            
+	            SolicitacaoManutencao solicitacao = solicitacaoRepo.findById(dto.getSolicitacaoId()).orElseThrow();
 
 	            ExecucaoManutencao execucao = new ExecucaoManutencao();
 	            execucao.setProblema(problema);
+	            execucao.setSolicitacaoManutencao(solicitacao); 
 	            execucao.setDataExecucao(dto.getDataExecucao());
 	            execucao.setTecnico(dto.getTecnico());
 	            execucao.setDescricao(dto.getDescricao());
-	          
+
 	            execucaoRepo.save(execucao);
 	        }
 
-	        // Depois de registrar todas execuções, atualiza a solicitação
-	        Long solicitacaoId = execucoes.get(0).getSolicitacaoId(); // você envia isso no DTO
+	        // Atualiza status da solicitação (pode ser opcional se feito acima)
+	        Long solicitacaoId = execucoes.get(0).getSolicitacaoId();
 	        SolicitacaoManutencao solicitacao = solicitacaoRepo.findById(solicitacaoId).orElseThrow();
 	        solicitacao.setStatus(false);
 	        solicitacaoRepo.save(solicitacao);

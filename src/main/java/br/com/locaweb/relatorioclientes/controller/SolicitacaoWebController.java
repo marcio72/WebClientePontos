@@ -28,10 +28,10 @@ public class SolicitacaoWebController {
         return "solicitacoes_abertas";
     }
 
-    @GetMapping("/relatorio_execucoes")
+   /* @GetMapping("/relatorio_execucoes")
     public String listarSolicitacoesComExecucao(Model model) {
-        List<ExecucaoManutencao> execucoes = execucaoRepository.findAll();
+        List<ExecucaoManutencao> execucoes = (List<ExecucaoManutencao>) execucaoRepository.findAll();
         model.addAttribute("execucoes", execucoes);
         return "relatorio_execucoes";
-    }
+    }*/
 }

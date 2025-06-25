@@ -42,12 +42,6 @@ public class SolicitacaoController {
     @Autowired
     private SolicitacaoManutencaoRepository solicitacaoRepo;
     
-    
-    
-     
-    
-    
-
     @PostMapping
     public ResponseEntity<?> criar(@RequestBody SolicitacaoDTO dto) {
         SolicitacaoManutencao solicitacao = new SolicitacaoManutencao();

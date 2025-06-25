@@ -23,9 +23,8 @@ public interface ClienteRepository extends JpaRepository<Cliente, Long> {
 
     Page<Cliente> findByNomClienteContainingIgnoreCaseAndAtivoTrueOrderByCodClienteDesc(String nome, Pageable pageable);
 
-      //List<Cliente> findByAtivoTrue();
       List<Cliente> findByAtivoTrueOrderByCodClienteDesc();
-      List<Cliente> findByAtivoTrue();  // <-- Adicione esta linha
+      List<Cliente> findByAtivoTrue();  
 
     
 

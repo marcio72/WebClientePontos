@@ -25,7 +25,7 @@ public class ExecucaoController {
     @PostMapping
     public ResponseEntity<?> salvar(@RequestBody ExecucaoManutencao execucao) {
         SolicitacaoManutencao solicitacao = solicitacaoRepository
-                .findById(execucao.getSolicitacao().getId())
+                .findById(execucao.getSolicitacaoManutencao().getId())
                 .orElse(null);
 
         if (solicitacao == null) {
@@ -33,7 +33,7 @@ public class ExecucaoController {
         }
 
         execucao.setDataExecucao(LocalDate.now());
-        execucao.setSolicitacao(solicitacao);
+        execucao.setSolicitacaoManutencao(solicitacao);
 
         solicitacao.setStatus(false); // marcar como resolvida
 
