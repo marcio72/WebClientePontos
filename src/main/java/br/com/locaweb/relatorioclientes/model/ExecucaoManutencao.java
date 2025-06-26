@@ -39,6 +39,9 @@ public class ExecucaoManutencao {
     @JoinColumn(name = "problema_id")
     @JsonBackReference
     private ProblemaMaquina problema;
+    
+    @Column(name = "pdf_gerado")
+    private boolean pdfGerado;
 }
 
 

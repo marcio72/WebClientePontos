@@ -26,7 +26,9 @@ public class ApiSolicitacao {
     @GetMapping("/relatorioExecucoes")
     public String listarComPaginacao(Model model,
                                      @RequestParam(defaultValue = "0") int page,
-                                     @RequestParam(defaultValue = "10") int size) {
+                                     @RequestParam(defaultValue = "7") int size,
+                                     @RequestParam(required = false) String busca,
+                                     @RequestParam(required = false) String pdf) {
 
         List<ExecucaoDTO> todos = execucaoRepository.findAllWithCliente()
             .stream()
@@ -37,6 +39,7 @@ public class ApiSolicitacao {
                 dto.setTecnico(exec.getTecnico());
                 dto.setDescricao(exec.getDescricao());
                 dto.setDataExecucao(exec.getDataExecucao());
+                dto.setPdfGerado(exec.isPdfGerado());
 
                 if (exec.getSolicitacaoManutencao() != null && exec.getSolicitacaoManutencao().getCliente() != null) {
                     dto.setNomeCliente(exec.getSolicitacaoManutencao().getCliente().getNomCliente());
@@ -57,7 +60,28 @@ public class ApiSolicitacao {
                 }
 
                 return dto;
-            }).toList();
+            })
+            .collect(Collectors.toList());
+
+        // Filtro por busca (cliente ou técnico)
+        if (busca != null && !busca.trim().isEmpty()) {
+            String termo = busca.trim().toLowerCase();
+            todos = todos.stream()
+                .filter(dto -> (dto.getNomeCliente() != null && dto.getNomeCliente().toLowerCase().contains(termo)) ||
+                               (dto.getTecnico() != null && dto.getTecnico().toLowerCase().contains(termo)))
+                .collect(Collectors.toList());
+        }
+
+        // Filtro por pdfGerado
+        if ("true".equalsIgnoreCase(pdf)) {
+            todos = todos.stream()
+                .filter(ExecucaoDTO::isPdfGerado)
+                .collect(Collectors.toList());
+        } else if ("false".equalsIgnoreCase(pdf)) {
+            todos = todos.stream()
+                .filter(dto -> !dto.isPdfGerado())
+                .collect(Collectors.toList());
+        }
 
         int total = todos.size();
         int fromIndex = Math.min(page * size, total);
@@ -67,8 +91,9 @@ public class ApiSolicitacao {
         model.addAttribute("execucoes", pagina);
         model.addAttribute("paginaAtual", page);
         model.addAttribute("totalPaginas", (int) Math.ceil((double) total / size));
+        model.addAttribute("busca", busca);
+        model.addAttribute("pdf", pdf);
 
         return "relatorioExecucoes";
     }
-
 }
