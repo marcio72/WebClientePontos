@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -8,186 +7,242 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
- <script>
-  let solicitacoes = {};
+  <script>
+    let solicitacoes = {};
+    const ID_CLIENTE_GENERICO_INSTALACAO = 1;
 
-  window.onload = () => {
-    fetch('/api/solicitacao')
-      .then(res => res.json())
-      .then(data => {
+    // 1. Carrega todas as solicitações abertas via API
+    window.onload = () => {
+        fetch('/api/solicitacao')
+            .then(res => res.json())
+            .then(data => {
+                const select = document.getElementById('solicitacao_cliente');
+                select.innerHTML = '<option selected disabled value="">Selecione a solicitação...</option>';
+
+                data.forEach((solicitacao) => {
+                    const option = document.createElement('option');
+                    option.value = solicitacao.id;
+                    option.text = solicitacao.cliente;
+                    option.setAttribute('data-cliente-id', solicitacao.clienteId);
+                    select.appendChild(option);
+
+                    solicitacoes[solicitacao.id] = solicitacao;
+                });
+            })
+            .catch(err => {
+                console.error("Erro ao carregar solicitações:", err);
+                alert("Erro ao carregar solicitações de manutenção.");
+            });
+    };
+
+    // 2. Decide qual parte do formulário mostrar/habilitar com base na seleção
+    function atualizarFormulario() {
         const select = document.getElementById('solicitacao_cliente');
-        select.innerHTML = '<option selected disabled>Selecione a solicitação do cliente...</option>';
+        const solicitacaoId = select.value;
+        if (!solicitacaoId) return;
 
-        data.forEach((solicitacao) => {
-        	  const option = document.createElement('option');
-        	  option.value = solicitacao.id; // <-- aqui usamos o id real
-        	  option.text = solicitacao.cliente;
-        	  select.appendChild(option);
+        const clienteId = parseInt(select.options[select.selectedIndex].getAttribute('data-cliente-id'));
+        
+        const formManutencao = document.getElementById('form-manutencao');
+        const infoInstalacao = document.getElementById('info-instalacao');
+        const btnConfirmar = document.getElementById('btn-confirmar-execucao');
+        const btnCadastrar = document.getElementById('btn-efetivar-cadastro');
+        const maquinaSelect = document.getElementById('maquina_execucao_select');
+        const btnAdicionar = document.getElementById('btn-adicionar-execucao');
 
-        	  solicitacoes[solicitacao.id] = solicitacao.problemas.map(p => ({
-        	    id: p.idProblema,
-        	    text: p.maquina,
-        	    descricao: p.descricao
-        	  }));
-        	});
+        // Limpa execuções anteriores ao trocar de solicitação
+        document.getElementById('execucoes_container').innerHTML = '';
 
-      })
-      .catch(err => {
-        console.error("Erro ao carregar solicitações:", err);
-        alert("Erro ao carregar solicitações de manutenção.");
-      });
-  };
+        if (clienteId === ID_CLIENTE_GENERICO_INSTALACAO) {
+            // É uma INSTALAÇÃO
+            formManutencao.style.display = 'none'; // Esconde a área de manutenção
+            infoInstalacao.style.display = 'block'; // Mostra a área de info da instalação
+            btnConfirmar.style.display = 'none'; // Esconde o botão de confirmar
+            btnCadastrar.style.display = 'inline-block'; // Mostra o botão de cadastrar
 
-  function atualizarMaquinasDaSolicitacao() {
-    const solicitacaoIndex = document.getElementById('solicitacao_cliente').value;
-    const maquinaSelect = document.getElementById('maquina_execucao_select');
-    maquinaSelect.innerHTML = '<option selected disabled>Escolha uma máquina</option>';
+            // Mostra a descrição da instalação para o usuário
+            const descricaoInstalacao = solicitacoes[solicitacaoId].problemas[0].descricao;
+            document.getElementById('detalhes-instalacao').innerText = descricaoInstalacao;
 
-    if (solicitacoes[solicitacaoIndex]) {
-      solicitacoes[solicitacaoIndex].forEach((m, idx) => {
-        const opt = document.createElement('option');
-        opt.value = m.id;
-        opt.text = m.text;
-        opt.setAttribute('data-descricao', m.descricao);
-        opt.setAttribute('data-index', solicitacaoIndex);
-        maquinaSelect.appendChild(opt);
-      });
-    }
-  }
+        } else {
+            // É uma MANUTENÇÃO NORMAL
+            formManutencao.style.display = 'block'; // Garante que a área de manutenção está visível
+            infoInstalacao.style.display = 'none'; // Esconde a área de instalação
+            btnConfirmar.style.display = 'inline-block'; // Mostra o botão de confirmar
+            btnCadastrar.style.display = 'none'; // Esconde o botão de cadastrar
+            
+            // Habilita os campos de manutenção
+            maquinaSelect.disabled = false;
+            btnAdicionar.disabled = false;
+            btnConfirmar.disabled = false;
 
-  function adicionarMaquinaExecucao() {
-    const select = document.getElementById('maquina_execucao_select');
-    const container = document.getElementById('execucoes_container');
-    const selectedId = select.value;
-    const selectedText = select.options[select.selectedIndex].text;
-    const descricao = select.options[select.selectedIndex].getAttribute('data-descricao');
 
-    if (!selectedId || document.getElementById('execucao_' + selectedId)) return;
-
-    const div = document.createElement('div');
-    div.className = 'mb-3';
-    div.id = 'execucao_' + selectedId;
-
-    div.innerHTML = `
-      <label class="form-label">${selectedText} - <span class="text-danger">${descricao}</span></label>
-      <div class="row mb-2">
-        <div class="col-md-4">
-          <label>Data da Execução</label>
-          <input type="date" class="form-control" name="data_execucao_${selectedId}">
-        </div>
-        <div class="col-md-4">
-          <label>Técnico</label>
-          <input type="text" class="form-control" name="tecnico_${selectedId}" placeholder="Fulano da Silva">
-        </div>
-      </div>
-      <label>O que foi feito</label>
-      <textarea class="form-control" name="descricao_execucao_${selectedId}" rows="2"></textarea>
-    `;
-
-    container.appendChild(div);
-  }
-
-  function confirmarExecucoes() {
-    const solicitacaoIndex = document.getElementById('solicitacao_cliente').value;
-    const solicitacaoSelect = document.getElementById('solicitacao_cliente');
-    const solicitacaoText = solicitacaoSelect.options[solicitacaoSelect.selectedIndex].text;
-
-    const execucoes = [];
-    const container = document.getElementById('execucoes_container');
-
-    if (!solicitacaoIndex) {
-      alert("Selecione uma solicitação válida.");
-      return;
+            // Popula o dropdown de máquinas
+            maquinaSelect.innerHTML = '<option selected disabled value="">Escolha uma máquina</option>';
+            if (solicitacoes[solicitacaoId] && solicitacoes[solicitacaoId].problemas) {
+                solicitacoes[solicitacaoId].problemas.forEach((p) => {
+                    const opt = document.createElement('option');
+                    opt.value = p.idProblema;
+                    opt.text = p.maquina;
+                    opt.setAttribute('data-descricao', p.descricao);
+                    maquinaSelect.appendChild(opt);
+                });
+            }
+        }
     }
 
-    Array.from(container.children).forEach(div => {
-    	  const id = div.id.split('_')[1];
-    	  const data = div.querySelector(`[name='data_execucao_${id}']`).value;
-    	  const tecnico = div.querySelector(`[name='tecnico_${id}']`).value;
-    	  const descricao = div.querySelector(`[name='descricao_execucao_${id}']`).value;
+    // 3. Redireciona para o cadastro (Funcionalidade de Instalação)
+    function iniciarCadastroDePonto() {
+        const solicitacaoId = document.getElementById('solicitacao_cliente').value;
+        if (!solicitacaoId) return;
 
-    	  execucoes.push({
-    	    problemaId: parseInt(id),
-    	    dataExecucao: data,
-    	    tecnico: tecnico,
-    	    descricao: descricao,
-    	    solicitacaoId: parseInt(solicitacaoIndex)  // <- ESSENCIAL
-    	  });
-    	});
-
-
-    if (execucoes.length === 0) {
-      alert("Nenhuma execução preenchida.");
-      return;
+        const descricaoCompleta = solicitacoes[solicitacaoId].problemas[0].descricao;
+        let nomePonto = '';
+        const match = descricaoCompleta.match(/NOVO PONTO: (.*)/);
+        if (match && match[1]) {
+            nomePonto = match[1].split('\n')[0].trim();
+        }
+        
+        window.location.href = `/clientes/novo-com-maquinas?nomePonto=${encodeURIComponent(nomePonto)}`;
     }
-    
-    console.log(JSON.stringify(execucoes, null, 2));
 
-    fetch('/execucao/execucao', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(execucoes)
-    })
-    .then(res => {
-      if (res.ok) {
-        alert('Execuções registradas com sucesso!');
-        window.location.reload();
-      } else {
-        res.text().then(msg => alert('Erro: ' + msg));
-      }
-    })
-    .catch(err => {
-      console.error(err);
-      alert('Erro ao conectar com o servidor.');
-    });
-  }
-</script>
+    // 4. Adiciona formulário de execução (Funcionalidade Original de Manutenção)
+    function adicionarMaquinaExecucao() {
+        const select = document.getElementById('maquina_execucao_select');
+        const container = document.getElementById('execucoes_container');
+        if (!select.value || select.value === "") return;
 
+        const selectedId = select.value;
+        const selectedText = select.options[select.selectedIndex].text;
+        const descricaoProblema = select.options[select.selectedIndex].getAttribute('data-descricao');
+
+        if (document.getElementById('execucao_' + selectedId)) return; // Evita duplicados
+
+        const div = document.createElement('div');
+        div.className = 'mb-3 p-3 border rounded bg-light';
+        div.id = 'execucao_' + selectedId;
+        div.innerHTML = `
+            <label class="form-label fw-bold">${selectedText} - <span class="text-danger">${descricaoProblema}</span></label>
+            <div class="row mb-2">
+                <div class="col-md-4">
+                    <label class="form-label small">Data da Execução</label>
+                    <input type="date" class="form-control" name="data_execucao_${selectedId}">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label small">Técnico</label>
+                    <input type="text" class="form-control" name="tecnico_${selectedId}" placeholder="Nome do técnico">
+                </div>
+            </div>
+            <label class="form-label small">O que foi feito</label>
+            <textarea class="form-control" name="descricao_execucao_${selectedId}" rows="2"></textarea>
+        `;
+        container.appendChild(div);
+    }
+
+    // 5. Confirma as execuções (Funcionalidade Original de Manutenção)
+    function confirmarExecucoes() {
+        const solicitacaoId = document.getElementById('solicitacao_cliente').value;
+        if (!solicitacaoId) {
+            alert("Selecione uma solicitação válida.");
+            return;
+        }
+
+        const execucoes = [];
+        const container = document.getElementById('execucoes_container');
+        Array.from(container.children).forEach(div => {
+            const id = div.id.split('_')[1];
+            const data = div.querySelector(`[name='data_execucao_${id}']`).value;
+            const tecnico = div.querySelector(`[name='tecnico_${id}']`).value;
+            const descricao = div.querySelector(`[name='descricao_execucao_${id}']`).value;
+
+            if (data && tecnico && descricao) { // Validação simples
+                execucoes.push({
+                    problemaId: parseInt(id),
+                    dataExecucao: data,
+                    tecnico: tecnico,
+                    descricao: descricao,
+                    solicitacaoId: parseInt(solicitacaoId)
+                });
+            }
+        });
+
+        if (execucoes.length === 0) {
+            alert("Nenhuma execução foi preenchida corretamente. Preencha todos os campos.");
+            return;
+        }
+        
+        fetch('/execucao/execucao', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(execucoes)
+        })
+        .then(res => {
+            if (res.ok) {
+                alert('Execuções registradas com sucesso!');
+                window.location.reload();
+            } else {
+                res.text().then(msg => alert('Erro: ' + msg));
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            alert('Erro ao conectar com o servidor.');
+        });
+    }
+  </script>
 </head>
 <body class="bg-light">
   <div class="container py-5">
     <div class="card shadow rounded-4">
       <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
-        <h5 class="mb-0"><i class="bi bi-check2-square"></i> Executar Manutenções</h5>
+        <h5 class="mb-0"><i class="bi bi-check2-square"></i> Execução de Serviço</h5>
       </div>
       <div class="card-body">
         <form>
           <div class="mb-3">
-            <label for="solicitacao_cliente" class="form-label">Solicitação por Cliente</label>
-            <select id="solicitacao_cliente" class="form-select" onchange="atualizarMaquinasDaSolicitacao()">
-              <option selected>Selecione a solicitação do cliente...</option>
+            <label for="solicitacao_cliente" class="form-label">Selecione o Serviço</label>
+            <select id="solicitacao_cliente" class="form-select" onchange="atualizarFormulario()">
+              <!-- Opções carregadas via JavaScript -->
             </select>
           </div>
 
-          <div class="row mb-3">
-            <div class="col-md-10">
-              <label for="maquina_execucao_select" class="form-label">Máquina</label>
-              <select id="maquina_execucao_select" class="form-select">
-                <option selected disabled>Escolha uma máquina</option>
-              </select>
+          <!-- Div para Manutenção Normal (visível por padrão, mas desabilitada) -->
+          <div id="form-manutencao">
+            <div class="row mb-3">
+              <div class="col-md-10">
+                <label for="maquina_execucao_select" class="form-label">Máquina</label>
+                <select id="maquina_execucao_select" class="form-select" disabled>
+                  <option selected disabled>Escolha uma máquina</option>
+                </select>
+              </div>
+              <div class="col-md-2 d-flex align-items-end">
+                <button id="btn-adicionar-execucao" type="button" onclick="adicionarMaquinaExecucao()" class="btn btn-secondary w-100" disabled>
+                  <i class="bi bi-plus-circle"></i> Adicionar
+                </button>
+              </div>
             </div>
-            <div class="col-md-2 d-flex align-items-end">
-              <button type="button" onclick="adicionarMaquinaExecucao()" class="btn btn-secondary w-100">
-                <i class="bi bi-plus-circle"></i> Adicionar
-              </button>
-            </div>
+            <div id="execucoes_container"></div>
           </div>
 
-          <div id="execucoes_container"></div>
-
-          <div class="text-end mt-12 d-flex justify-content-between">
-          			<a href="/menu" class="btn btn-secondary">Voltar ao Menu</a>
+          <!-- Div para Informações de Instalação (escondida por padrão) -->
+          <div id="info-instalacao" style="display: none;" class="alert alert-info">
+              <h5 class="alert-heading">Pedido de Instalação</h5>
+              <p>Esta é uma solicitação para instalar equipamentos em um novo ponto. Após a execução, clique no botão "Efetivar Cadastro" para registrar o cliente no sistema.</p>
+              <hr>
+              <p class="mb-0 fw-bold">Detalhes:</p>
+              <p id="detalhes-instalacao" style="white-space: pre-wrap;"></p>
+          </div>
           
-          	
-          	<!--  <div class="text-end mt-12 d-flex justify-content-between">
-            			<button type="button" class="btn btn-outline-primary" onclick="gerarRelatorioExecucoes()">
-              				<i class="bi bi-printer"></i> Gerar Relatório de Execuções
-            			</button>-->
-           
-            		<button type="button" class="btn btn-success" onclick="confirmarExecucoes()">
-              					<i class="bi bi-check-circle"></i> Confirmar Execuções
-            		</button>
-            
+          <div class="mt-4 d-flex justify-content-between">
+            <a href="/menu" class="btn btn-outline-secondary">Voltar ao Menu</a>
+            <div>
+                <button id="btn-confirmar-execucao" type="button" class="btn btn-success" onclick="confirmarExecucoes()" disabled>
+                  <i class="bi bi-check-circle"></i> Confirmar Execuções
+                </button>
+                <button id="btn-efetivar-cadastro" type="button" class="btn btn-primary" onclick="iniciarCadastroDePonto()" style="display: none;">
+                  <i class="bi bi-person-plus-fill"></i> Efetivar Cadastro do Ponto
+                </button>
+            </div>
           </div>
         </form>
       </div>

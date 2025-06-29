@@ -31,4 +31,11 @@ public class FormularioController {
      public String exibirFormularioCadastro() {
          return "form_cadmaq"; // nome do arquivo .html sem extensão
      }
+     
+     @GetMapping("/form_instalacao")
+     public String exibirFormularioInstalacao() {
+         return "form_instalacao"; // Retorna o nome do novo arquivo HTML
+     }
+     
+     
 }

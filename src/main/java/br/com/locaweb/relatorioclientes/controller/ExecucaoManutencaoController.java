@@ -3,6 +3,8 @@ package br.com.locaweb.relatorioclientes.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.transaction.Transactional;
+
 import java.time.LocalDate;
 import java.util.List;
 
@@ -80,10 +82,20 @@ public class ExecucaoManutencaoController {
 	    }
 	    
 	    @PostMapping("/execucao")
+	    @Transactional // 2. ADICIONAR ESTA ANOTAÇÃO
 	    public ResponseEntity<?> registrarExecucao(@RequestBody List<ExecucaoRequestDTO> execucoes) {
+	        if (execucoes == null || execucoes.isEmpty()) {
+	            return ResponseEntity.badRequest().body("A lista de execuções não pode ser vazia.");
+	        }
+
+	        // Pega o ID da solicitação do primeiro item (todos devem pertencer à mesma solicitação)
+	        Long solicitacaoId = execucoes.get(0).getSolicitacaoId();
+	        SolicitacaoManutencao solicitacao = solicitacaoRepo.findById(solicitacaoId)
+	                .orElseThrow(() -> new RuntimeException("Solicitação com ID " + solicitacaoId + " não encontrada."));
+
 	        for (ExecucaoRequestDTO dto : execucoes) {
-	            ProblemaMaquina problema = problemaRepository.findById(dto.getProblemaId()).orElseThrow();
-	            SolicitacaoManutencao solicitacao = solicitacaoRepo.findById(dto.getSolicitacaoId()).orElseThrow();
+	            ProblemaMaquina problema = problemaRepository.findById(dto.getProblemaId())
+	                    .orElseThrow(() -> new RuntimeException("Problema com ID " + dto.getProblemaId() + " não encontrado."));
 
 	            ExecucaoManutencao execucao = new ExecucaoManutencao();
 	            execucao.setProblema(problema);
@@ -95,9 +107,7 @@ public class ExecucaoManutencaoController {
 	            execucaoRepo.save(execucao);
 	        }
 
-	        // Atualiza status da solicitação (pode ser opcional se feito acima)
-	        Long solicitacaoId = execucoes.get(0).getSolicitacaoId();
-	        SolicitacaoManutencao solicitacao = solicitacaoRepo.findById(solicitacaoId).orElseThrow();
+	        // Atualiza o status da solicitação para 'false' (resolvida)
 	        solicitacao.setStatus(false);
 	        solicitacaoRepo.save(solicitacao);
 

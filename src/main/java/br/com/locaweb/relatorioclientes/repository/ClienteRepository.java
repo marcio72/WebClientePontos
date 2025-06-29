@@ -29,7 +29,7 @@ public interface ClienteRepository extends JpaRepository<Cliente, Long> {
     
 
     // ✅ Método com múltiplos filtros
-    @Query("SELECT c FROM Cliente c WHERE c.ativo = true "
+   /* @Query("SELECT c FROM Cliente c WHERE c.ativo = true "
     	     + "AND (:nome IS NULL OR UPPER(c.nomCliente) LIKE UPPER(CONCAT('%', :nome, '%'))) "
     	     + "AND (:dataInicio IS NULL OR DATE(c.dtCadastro) >= :dataInicio) "
     	     + "AND (:dataFim IS NULL OR DATE(c.dtCadastro) <= :dataFim) "
@@ -38,4 +38,19 @@ public interface ClienteRepository extends JpaRepository<Cliente, Long> {
     	                                    @Param("dataInicio") LocalDate dataInicio,
     	                                    @Param("dataFim") LocalDate dataFim,
     	                                    Pageable pageable);
+}*/
+
+      
+      @Query("SELECT c FROM Cliente c WHERE c.ativo = true "
+    	         + "AND (:nome IS NULL OR UPPER(c.nomCliente) LIKE UPPER(CONCAT('%', :nome, '%'))) "
+    	         + "AND (:dataInicio IS NULL OR DATE(c.dtCadastro) >= :dataInicio) "
+    	         + "AND (:dataFim IS NULL OR DATE(c.dtCadastro) <= :dataFim) "
+    	         + "AND (:regiao IS NULL OR c.regiao = :regiao) " // <-- NOVA LINHA ADICIONADA
+    	         + "ORDER BY c.codCliente DESC")
+    	    Page<Cliente> findClientesFiltrados(@Param("nome") String nome,
+    	                                        @Param("dataInicio") LocalDate dataInicio,
+    	                                        @Param("dataFim") LocalDate dataFim,
+    	                                        @Param("regiao") Integer regiao, // <-- NOVO PARÂMETRO ADICIONADO
+    	                                        Pageable pageable);
 }
+

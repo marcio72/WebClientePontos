@@ -5,7 +5,19 @@ import java.util.List;
 public class SolicitacaoResponseDTO {
 	
 	private Long id;
-	private Long idProblema; // novo campo!
+	private Long idProblema; 
+	private Long clienteId;
+	private String cliente;
+	private Boolean status;
+	
+	public Long getClienteId() {
+		return clienteId;
+	}
+
+	public void setClienteId(Long clienteId) {
+		this.clienteId = clienteId;
+	}
+
 	public Long getIdProblema() {
 		return idProblema;
 	}
@@ -14,8 +26,7 @@ public class SolicitacaoResponseDTO {
 		this.idProblema = idProblema;
 	}
 
-	private String cliente;
-	private Boolean status;
+	
     public Boolean getStatus() {
 		return status;
 	}

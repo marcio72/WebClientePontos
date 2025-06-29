@@ -1,6 +1,7 @@
 package br.com.locaweb.relatorioclientes.model;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -46,6 +47,19 @@ public class Cliente {
 
     @Column(name = "Ativo")
     private Boolean ativo;
+    
+    
+    @Transient // Esta anotação diz ao JPA para ignorar este campo no banco de dados
+    private List<Maquina> maquinas;
+
+    // Adicione os getters e setters para a lista de máquinas
+    public List<Maquina> getMaquinas() {
+        return maquinas;
+    }
+
+    public void setMaquinas(List<Maquina> maquinas) {
+        this.maquinas = maquinas;
+    }
 
 
 }

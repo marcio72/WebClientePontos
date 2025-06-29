@@ -1,0 +1,197 @@
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Execução de Manutenção</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+ <script>
+  let solicitacoes = {};
+
+  window.onload = () => {
+    fetch('/api/solicitacao')
+      .then(res => res.json())
+      .then(data => {
+        const select = document.getElementById('solicitacao_cliente');
+        select.innerHTML = '<option selected disabled>Selecione a solicitação do cliente...</option>';
+
+        data.forEach((solicitacao) => {
+        	  const option = document.createElement('option');
+        	  option.value = solicitacao.id; // <-- aqui usamos o id real
+        	  option.text = solicitacao.cliente;
+        	  select.appendChild(option);
+
+        	  solicitacoes[solicitacao.id] = solicitacao.problemas.map(p => ({
+        	    id: p.idProblema,
+        	    text: p.maquina,
+        	    descricao: p.descricao
+        	  }));
+        	});
+
+      })
+      .catch(err => {
+        console.error("Erro ao carregar solicitações:", err);
+        alert("Erro ao carregar solicitações de manutenção.");
+      });
+  };
+
+  function atualizarMaquinasDaSolicitacao() {
+    const solicitacaoIndex = document.getElementById('solicitacao_cliente').value;
+    const maquinaSelect = document.getElementById('maquina_execucao_select');
+    maquinaSelect.innerHTML = '<option selected disabled>Escolha uma máquina</option>';
+
+    if (solicitacoes[solicitacaoIndex]) {
+      solicitacoes[solicitacaoIndex].forEach((m, idx) => {
+        const opt = document.createElement('option');
+        opt.value = m.id;
+        opt.text = m.text;
+        opt.setAttribute('data-descricao', m.descricao);
+        opt.setAttribute('data-index', solicitacaoIndex);
+        maquinaSelect.appendChild(opt);
+      });
+    }
+  }
+
+  function adicionarMaquinaExecucao() {
+    const select = document.getElementById('maquina_execucao_select');
+    const container = document.getElementById('execucoes_container');
+    const selectedId = select.value;
+    const selectedText = select.options[select.selectedIndex].text;
+    const descricao = select.options[select.selectedIndex].getAttribute('data-descricao');
+
+    if (!selectedId || document.getElementById('execucao_' + selectedId)) return;
+
+    const div = document.createElement('div');
+    div.className = 'mb-3';
+    div.id = 'execucao_' + selectedId;
+
+    div.innerHTML = `
+      <label class="form-label">${selectedText} - <span class="text-danger">${descricao}</span></label>
+      <div class="row mb-2">
+        <div class="col-md-4">
+          <label>Data da Execução</label>
+          <input type="date" class="form-control" name="data_execucao_${selectedId}">
+        </div>
+        <div class="col-md-4">
+          <label>Técnico</label>
+          <input type="text" class="form-control" name="tecnico_${selectedId}" placeholder="Fulano da Silva">
+        </div>
+      </div>
+      <label>O que foi feito</label>
+      <textarea class="form-control" name="descricao_execucao_${selectedId}" rows="2"></textarea>
+    `;
+
+    container.appendChild(div);
+  }
+
+  function confirmarExecucoes() {
+    const solicitacaoIndex = document.getElementById('solicitacao_cliente').value;
+    const solicitacaoSelect = document.getElementById('solicitacao_cliente');
+    const solicitacaoText = solicitacaoSelect.options[solicitacaoSelect.selectedIndex].text;
+
+    const execucoes = [];
+    const container = document.getElementById('execucoes_container');
+
+    if (!solicitacaoIndex) {
+      alert("Selecione uma solicitação válida.");
+      return;
+    }
+
+    Array.from(container.children).forEach(div => {
+    	  const id = div.id.split('_')[1];
+    	  const data = div.querySelector(`[name='data_execucao_${id}']`).value;
+    	  const tecnico = div.querySelector(`[name='tecnico_${id}']`).value;
+    	  const descricao = div.querySelector(`[name='descricao_execucao_${id}']`).value;
+
+    	  execucoes.push({
+    	    problemaId: parseInt(id),
+    	    dataExecucao: data,
+    	    tecnico: tecnico,
+    	    descricao: descricao,
+    	    solicitacaoId: parseInt(solicitacaoIndex)  // <- ESSENCIAL
+    	  });
+    	});
+
+
+    if (execucoes.length === 0) {
+      alert("Nenhuma execução preenchida.");
+      return;
+    }
+    
+    console.log(JSON.stringify(execucoes, null, 2));
+
+    fetch('/execucao/execucao', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(execucoes)
+    })
+    .then(res => {
+      if (res.ok) {
+        alert('Execuções registradas com sucesso!');
+        window.location.reload();
+      } else {
+        res.text().then(msg => alert('Erro: ' + msg));
+      }
+    })
+    .catch(err => {
+      console.error(err);
+      alert('Erro ao conectar com o servidor.');
+    });
+  }
+</script>
+
+</head>
+<body class="bg-light">
+  <div class="container py-5">
+    <div class="card shadow rounded-4">
+      <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+        <h5 class="mb-0"><i class="bi bi-check2-square"></i> Executar Manutenções</h5>
+      </div>
+      <div class="card-body">
+        <form>
+          <div class="mb-3">
+            <label for="solicitacao_cliente" class="form-label">Solicitação por Cliente</label>
+            <select id="solicitacao_cliente" class="form-select" onchange="atualizarMaquinasDaSolicitacao()">
+              <option selected>Selecione a solicitação do cliente...</option>
+            </select>
+          </div>
+
+          <div class="row mb-3">
+            <div class="col-md-10">
+              <label for="maquina_execucao_select" class="form-label">Máquina</label>
+              <select id="maquina_execucao_select" class="form-select">
+                <option selected disabled>Escolha uma máquina</option>
+              </select>
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+              <button type="button" onclick="adicionarMaquinaExecucao()" class="btn btn-secondary w-100">
+                <i class="bi bi-plus-circle"></i> Adicionar
+              </button>
+            </div>
+          </div>
+
+          <div id="execucoes_container"></div>
+
+          <div class="text-end mt-12 d-flex justify-content-between">
+          			<a href="/menu" class="btn btn-secondary">Voltar ao Menu</a>
+          
+          	
+          	<!--  <div class="text-end mt-12 d-flex justify-content-between">
+            			<button type="button" class="btn btn-outline-primary" onclick="gerarRelatorioExecucoes()">
+              				<i class="bi bi-printer"></i> Gerar Relatório de Execuções
+            			</button>-->
+           
+            		<button type="button" class="btn btn-success" onclick="confirmarExecucoes()">
+              					<i class="bi bi-check-circle"></i> Confirmar Execuções
+            		</button>
+            
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

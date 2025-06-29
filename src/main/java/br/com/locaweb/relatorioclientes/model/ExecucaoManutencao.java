@@ -2,22 +2,15 @@ package br.com.locaweb.relatorioclientes.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-
-
 import java.time.LocalDate;
 import com.fasterxml.jackson.annotation.JsonBackReference;
-
 
 @Entity
 @Getter
 @Setter
 @Table(name = "execucao_manutencao")
-
-
 public class ExecucaoManutencao {
 
-	
-	
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -30,9 +23,10 @@ public class ExecucaoManutencao {
     @Column(name = "data_execucao")
     private LocalDate dataExecucao;
 
-    @OneToOne
+    // --- CORREÇÃO AQUI ---
+    // A anotação foi alterada de @OneToOne para @ManyToOne, que é a relação correta.
+    @ManyToOne 
     @JoinColumn(name = "solicitacao_id")
-    
     private SolicitacaoManutencao solicitacaoManutencao;
 
     @ManyToOne
@@ -43,5 +37,3 @@ public class ExecucaoManutencao {
     @Column(name = "pdf_gerado")
     private boolean pdfGerado;
 }
-
-

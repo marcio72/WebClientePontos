@@ -26,7 +26,7 @@ public class ApiSolicitacao {
     @GetMapping("/relatorioExecucoes")
     public String listarComPaginacao(Model model,
                                      @RequestParam(defaultValue = "0") int page,
-                                     @RequestParam(defaultValue = "7") int size,
+                                     @RequestParam(defaultValue = "5") int size,
                                      @RequestParam(required = false) String busca,
                                      @RequestParam(required = false) String pdf) {
 

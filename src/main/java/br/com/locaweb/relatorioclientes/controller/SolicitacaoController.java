@@ -64,7 +64,7 @@ public class SolicitacaoController {
         return ResponseEntity.ok().build();
     }
     
-    @GetMapping
+    /*@GetMapping
     public ResponseEntity<List<SolicitacaoResponseDTO>> listarSolicitacoesComProblemas() {
         List<SolicitacaoResponseDTO> resultado = solicitacaoRepo.findByStatusTrue().stream().map(s -> {
             SolicitacaoResponseDTO dto = new SolicitacaoResponseDTO();
@@ -81,6 +81,33 @@ public class SolicitacaoController {
                 problemaDTO.setMaquina(p.getMaquina().getNom_maq() + " - " + p.getMaquina().getNom_jogo());
                 problemaDTO.setDescricao(p.getDescricao());
                 problemaDTO.setIdProblema(p.getId()); // ID do problema
+                return problemaDTO;
+            }).collect(Collectors.toList());
+
+            dto.setProblemas(problemas);
+            return dto;
+        }).collect(Collectors.toList());
+
+        return ResponseEntity.ok(resultado);
+    }*/
+    	
+    @GetMapping
+    public ResponseEntity<List<SolicitacaoResponseDTO>> listarSolicitacoesComProblemas() {
+        List<SolicitacaoResponseDTO> resultado = solicitacaoRepo.findByStatusTrue().stream().map(s -> {
+            SolicitacaoResponseDTO dto = new SolicitacaoResponseDTO();
+            dto.setId(s.getId()); 
+            dto.setClienteId(s.getCliente().getCodCliente()); // LINHA ADICIONADA
+
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            dto.setCliente(s.getCliente().getNomCliente() + " - " + s.getDataSolicitacao().format(formatter));
+            dto.setStatus(s.getStatus());
+            
+            // ... resto do seu método ...
+            List<SolicitacaoResponseDTO.ProblemaDTO> problemas = s.getProblemas().stream().map(p -> {
+                SolicitacaoResponseDTO.ProblemaDTO problemaDTO = new SolicitacaoResponseDTO.ProblemaDTO();
+                problemaDTO.setMaquina(p.getMaquina().getNom_maq() + " - " + p.getMaquina().getNom_jogo());
+                problemaDTO.setDescricao(p.getDescricao());
+                problemaDTO.setIdProblema(p.getId());
                 return problemaDTO;
             }).collect(Collectors.toList());
 

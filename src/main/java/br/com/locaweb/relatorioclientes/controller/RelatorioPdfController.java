@@ -95,7 +95,7 @@ public class RelatorioPdfController {
         doc.open();
 
         // Fontes
-        Font tituloFont = new Font(Font.FontFamily.HELVETICA, 14, Font.BOLD);
+        Font tituloFont = new Font(Font.FontFamily.COURIER,14, Font.BOLD);
         Font rotuloFont = new Font(Font.FontFamily.HELVETICA, 11, Font.BOLD);
         Font textoMonoFont = new Font(Font.FontFamily.COURIER, 11, Font.NORMAL);
 
@@ -139,7 +139,7 @@ public class RelatorioPdfController {
 
         // Seção: Detalhes do Chamado
         Paragraph subtitulo = new Paragraph("Detalhes do Chamado:", rotuloFont);
-        subtitulo.setSpacingAfter(10);
+        subtitulo.setSpacingAfter(7);
         doc.add(subtitulo);
 
         // Tabela de detalhes
@@ -172,8 +172,10 @@ public class RelatorioPdfController {
 
     // Método auxiliar para nome do arquivo com cliente + data
     private String gerarNomeArquivo(ExecucaoManutencao exec) {
+    	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         String nomeCliente = exec.getSolicitacaoManutencao().getCliente().getNomCliente();
-        String data = exec.getDataExecucao().format(DateTimeFormatter.ISO_DATE); // yyyy-MM-dd
+        String data = exec.getDataExecucao().format(formatter);
+        //String data = exec.getDataExecucao().format(DateTimeFormatter.ISO_DATE); // yyyy-MM-dd
 
         nomeCliente = Normalizer.normalize(nomeCliente, Normalizer.Form.NFD)
                                  .replaceAll("[\\p{InCombiningDiacriticalMarks}]", "")

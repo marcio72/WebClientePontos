@@ -2,8 +2,11 @@ package br.com.locaweb.relatorioclientes.controller;
 
 import br.com.locaweb.relatorioclientes.model.Cliente;
 import br.com.locaweb.relatorioclientes.model.HistoricoAlteracao;
+import br.com.locaweb.relatorioclientes.model.Maquina;
 import br.com.locaweb.relatorioclientes.repository.ClienteRepository;
 import br.com.locaweb.relatorioclientes.repository.HistoricoAlteracaoRepository;
+import br.com.locaweb.relatorioclientes.repository.MaquinaRepository;
+import br.com.locaweb.relatorioclientes.util.ConvertRegiao;
 
 import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties.Pageable;
@@ -36,7 +39,13 @@ public class ClienteCrudController {
         return "formulario-cliente";
     }
     
-    
+ // Dentro da classe br.com.locaweb.relatorioclientes.controller.ClienteCrudController
+
+    @GetMapping("/novo-com-maquinas")
+    public String novoClienteComMaquinas(Model model, @RequestParam(required = false) String nomePonto) {
+        model.addAttribute("nomePonto", nomePonto);
+        return "cadastro-cliente-maquinas"; 
+    }
 
     /*@PostMapping("/salvar")
     public String salvarCliente(@ModelAttribute Cliente cliente, RedirectAttributes redirectAttributes) {
@@ -103,16 +112,23 @@ public class ClienteCrudController {
 
 
 
+ // Dentro de br.com.locaweb.relatorioclientes.controller.ClienteCrudController.java
+
     @GetMapping("/listar")
     public String listarClientes(@RequestParam(defaultValue = "0") int page,
-                                 @RequestParam(defaultValue = "10") int size,
+                                 @RequestParam(defaultValue = "5") int size,
                                  @RequestParam(required = false) String nome,
                                  @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataInicio,
                                  @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataFim,
                                  Model model) {
 
         Pageable pageable = PageRequest.of(page, size);
-        Page<Cliente> clientePage = clienteRepository.findClientesFiltrados(nome, dataInicio, dataFim, pageable);
+
+        // --- CORREÇÃO AQUI ---
+        // Adicionamos 'null' como o quinto argumento para o parâmetro de região,
+        // já que esta tela não possui filtro por região.
+        Page<Cliente> clientePage = clienteRepository.findClientesFiltrados(nome, dataInicio, dataFim, null, pageable);
+        // --- FIM DA CORREÇÃO ---
 
         model.addAttribute("clientes", clientePage.getContent());
         model.addAttribute("clientePage", clientePage);
@@ -147,7 +163,73 @@ public class ClienteCrudController {
         model.addAttribute("historico", historico);
         return "historico-cliente";
     }
+    
+    
+    @Autowired
+    private MaquinaRepository maquinaRepository; // Injete o repositório de máquinas
 
+   /* @GetMapping("/clientes-e-maquinas")
+    public String listarClientesEMaquinas(Model model,
+                                        @RequestParam(defaultValue = "0") int page,
+                                        @RequestParam(defaultValue = "5") int size,
+                                        @RequestParam(required = false) String busca,
+                                        @RequestParam(required = false) String regiao) {
+
+        Pageable pageable = PageRequest.of(page, size);
+        
+        // Busca paginada de clientes. (Poderíamos criar um método de busca mais complexo no futuro)
+        Page<Cliente> paginaClientes = clienteRepository.findAll(pageable);
+
+        // Para cada cliente na página, buscamos suas máquinas
+        paginaClientes.getContent().forEach(cliente -> {
+            List<Maquina> maquinas = maquinaRepository.findByCodCliente(cliente.getCodCliente().intValue());
+            cliente.setMaquinas(maquinas); // Precisaremos adicionar um campo "maquinas" na classe Cliente
+        });
+        
+        model.addAttribute("paginaClientes", paginaClientes);
+        model.addAttribute("busca", busca);
+        model.addAttribute("regiao", regiao);
+
+        return "listar-clientes-maquinas";
+    }*/
+    
+ // Dentro da classe br.com.locaweb.relatorioclientes.controller.ClienteCrudController
+
+    @GetMapping("/clientes-e-maquinas")
+    public String listarClientesEMaquinas(Model model,
+                                          @RequestParam(defaultValue = "0") int page,
+                                          @RequestParam(defaultValue = "6") int size,
+                                          @RequestParam(required = false) String busca,
+                                          @RequestParam(required = false) String regiao) {
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        // Converte a String da região (ex: "SUL") para seu código Integer (ex: 2)
+        Integer codigoRegiao = null;
+        if (regiao != null && !regiao.isEmpty()) {
+            try {
+                codigoRegiao = ConvertRegiao.valueOf(regiao).getCodigo();
+            } catch (IllegalArgumentException e) {
+                // Trata caso um valor inválido seja passado na URL, ignorando o filtro
+                codigoRegiao = null; 
+            }
+        }
+
+        // Chama a consulta ATUALIZADA passando o código da região
+        Page<Cliente> paginaClientes = clienteRepository.findClientesFiltrados(busca, null, null, codigoRegiao, pageable);
+
+        // Para cada cliente na página, buscamos suas máquinas (lógica inalterada)
+        paginaClientes.getContent().forEach(cliente -> {
+            List<Maquina> maquinas = maquinaRepository.findByCodCliente(cliente.getCodCliente().intValue());
+            cliente.setMaquinas(maquinas);
+        });
+
+        model.addAttribute("paginaClientes", paginaClientes);
+        model.addAttribute("busca", busca);
+        model.addAttribute("regiao", regiao); // Mantém o valor do filtro selecionado na tela
+
+        return "listar-clientes-maquinas";
+    }
 
     
 }

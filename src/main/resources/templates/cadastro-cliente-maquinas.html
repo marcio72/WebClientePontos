@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Cliente e Máquinas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        .machine-card {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: .25rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+        .summary-link {
+            cursor: pointer;
+            color: var(--bs-primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .summary-link:hover {
+            text-decoration: underline;
+        }
+        /* Estilo para a legenda do fieldset */
+        legend.scheduler-border {
+            font-size: 1rem !important; /* Tamanho da fonte */
+            font-weight: 500 !important;
+            text-align: left !important;
+            width: auto;
+            padding: 0 10px;
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body class="bg-light">
+
+<div class="container py-5">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0"><i class="bi bi-person-plus-fill"></i> Novo Cliente e Máquinas</h4>
+        </div>
+        <div class="card-body">
+
+            <!-- DADOS DO CLIENTE -->
+            <h5 class="mb-3">1. Dados do Cliente</h5>
+            <div id="form-cliente" class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label">Nome do Ponto</label>
+                    <input type="text" id="nomCliente" class="form-control" th:value="${nomePonto}" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Logradouro</label>
+                    <input type="text" id="logradouro" class="form-control" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Bairro</label>
+                    <input type="text" id="bairro" class="form-control" required>
+                </div>
+                 <div class="col-md-4">
+                    <label class="form-label">Telefone</label>
+                    <input type="text" id="telefone" class="form-control" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Contato</label>
+                    <input type="text" id="contato" class="form-control">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Região</label>
+                    <select id="regiao" class="form-select" required>
+                        <option value="">Selecione...</option>
+                        <option value="1">Norte</option>
+                        <option value="2">Sul</option>
+                        <option value="3">Leste</option>
+                        <option value="4">Oeste</option>
+                        <option value="5">Centro</option>
+                        <option value="6">ABC</option>
+                    </select>
+                </div>
+            </div>
+
+            <hr class="my-4">
+
+            <h5 class="mb-3">2. Adicionar Máquinas</h5>
+            <div class="card p-3 mb-3">
+                 <div class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label">Nº da Máquina</label>
+                        <input type="text" id="maq_nome" class="form-control">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Nome do Jogo</label>
+                        <input type="text" id="maq_jogo" class="form-control">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Nº da Placa</label>
+                        <input type="text" id="maq_placa" class="form-control">
+                    </div>
+                    <div class="col-12">
+                         <label class="form-label">Observação</label>
+                        <input type="text" id="maq_obs" class="form-control">
+                    </div>
+
+                    <!-- Seção Leitura Inicial Melhorada -->
+                    <div class="col-12 mt-3">
+                        <fieldset class="border p-3 rounded bg-light">
+                            <legend class="float-none w-auto px-2 h6 scheduler-border text-muted">Leitura Inicial</legend>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label for="Entrada" class="form-label">Entrada</label>
+                                    <input type="text" id="Entrada" class="form-control">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="Saida" class="form-label">Saída</label>
+                                    <input type="text" id="Saida" class="form-control">
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+
+                    <!-- Botão de adicionar alinhado à direita -->
+                    <div class="col-12 text-end">
+                        <button type="button" class="btn btn-secondary mt-3" onclick="adicionarMaquina()">
+                            <i class="bi bi-plus-circle"></i> Adicionar à Lista
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <h5 class="mb-3">Máquinas a serem Cadastradas</h5>
+            <div id="maquinas_container">
+                 <p class="text-muted">Nenhuma máquina adicionada.</p>
+            </div>
+
+
+            <div class="mt-4 d-flex justify-content-between">
+                <a href="/menu" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Voltar ao Menu</a>
+                <button type="button" class="btn btn-success btn-lg" onclick="salvarTudo()">
+                    <i class="bi bi-check-circle-fill"></i> Salvar Cliente e Máquinas
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let maquinasAdicionadas = [];
+
+    function toggleListaMaquinas() {
+        const lista = document.getElementById('lista-maquinas-detalhes');
+        if (lista) {
+            lista.style.display = (lista.style.display === 'none' || lista.style.display === '') ? 'block' : 'none';
+        }
+    }
+
+    function adicionarMaquina() {
+        const nome = document.getElementById('maq_nome').value;
+        const jogo = document.getElementById('maq_jogo').value;
+        const placa = document.getElementById('maq_placa').value;
+        const obs = document.getElementById('maq_obs').value;
+        const entrada = document.getElementById('Entrada').value;
+        const saida = document.getElementById('Saida').value;
+
+
+        if (!nome || !jogo) {
+            alert('Preencha pelo menos o Nº da Máquina e o Nome do Jogo.');
+            return;
+        }
+
+        const maquina = {
+            nom_maq: nome,
+            nom_jogo: jogo,
+            numeroPlaca: placa,
+            obs: obs,
+            entrada: entrada, // Adiciona o campo
+            saida: saida      // Adiciona o campo
+        };
+
+        maquinasAdicionadas.push(maquina);
+        renderizarMaquinas();
+
+        // Limpa todos os campos do formulário da máquina
+        document.getElementById('maq_nome').value = '';
+        document.getElementById('maq_jogo').value = '';
+        document.getElementById('maq_placa').value = '';
+        document.getElementById('maq_obs').value = '';
+        document.getElementById('Entrada').value = '';
+        document.getElementById('Saida').value = '';
+        document.getElementById('maq_nome').focus();
+    }
+
+    function renderizarMaquinas() {
+        const container = document.getElementById('maquinas_container');
+        container.innerHTML = ''; 
+
+        if(maquinasAdicionadas.length === 0){
+             container.innerHTML = '<p class="text-muted">Nenhuma máquina adicionada.</p>';
+             return;
+        }
+
+        const summaryLink = document.createElement('a');
+        summaryLink.href = 'javascript:void(0);';
+        summaryLink.className = 'summary-link mb-2 d-inline-block';
+        summaryLink.onclick = toggleListaMaquinas;
+        summaryLink.innerHTML = `<i class="bi bi-hdd-stack-fill"></i> <strong>${maquinasAdicionadas.length}</strong> máquinas adicionadas (clique para ver/ocultar)`;
+        container.appendChild(summaryLink);
+        
+        const listContainer = document.createElement('div');
+        listContainer.id = 'lista-maquinas-detalhes';
+        listContainer.style.display = 'none';
+        
+        maquinasAdicionadas.forEach((maq, index) => {
+            const div = document.createElement('div');
+            div.className = 'machine-card';
+            div.innerHTML = `
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <strong>Máquina:</strong> ${maq.nom_maq} | <strong>Jogo:</strong> ${maq.nom_jogo}<br>
+                        <small><strong>Placa:</strong> ${maq.numeroPlaca || '-'} | <strong>Obs:</strong> ${maq.obs || '-'}</small>
+                    </div>
+                    <button type="button" class="btn btn-sm btn-outline-danger" onclick="removerMaquina(${index})">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </div>
+                <hr class="my-2">
+                <small><strong>Leitura:</strong> E: ${maq.entrada || '0'} | S: ${maq.saida || '0'}</small>
+            `;
+            listContainer.appendChild(div);
+        });
+
+        container.appendChild(listContainer);
+    }
+
+    function removerMaquina(index) {
+        maquinasAdicionadas.splice(index, 1);
+        renderizarMaquinas();
+    }
+
+    function salvarTudo() {
+        const cliente = {
+            nomCliente: document.getElementById('nomCliente').value.toUpperCase(),
+            logradouro: document.getElementById('logradouro').value,
+            bairro: document.getElementById('bairro').value,
+            telefone: document.getElementById('telefone').value,
+            contato: document.getElementById('contato').value,
+            regiao: parseInt(document.getElementById('regiao').value),
+            ativo: true,
+            dtCadastro: new Date().toISOString()
+        };
+
+        if (!cliente.nomCliente || !cliente.logradouro || !cliente.bairro) {
+            alert('Por favor, preencha todos os dados do cliente.');
+            return;
+        }
+
+        const payload = {
+            cliente: cliente,
+            maquinas: maquinasAdicionadas.map(m => ({ // Envia apenas os campos que o backend espera
+                nom_maq: m.nom_maq,
+                nom_jogo: m.nom_jogo,
+                numeroPlaca: m.numeroPlaca,
+                obs: m.obs
+            }))
+        };
+        
+        fetch('/api/cadastros/cliente-com-maquinas', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        })
+        .then(response => {
+            if (response.ok) {
+                alert('Cliente e máquinas cadastrados com sucesso!');
+                window.location.href = '/clientes/listar';
+            } else {
+                response.text().then(text => alert('Erro ao cadastrar: ' + text));
+            }
+        })
+        .catch(error => {
+            console.error('Erro de rede:', error);
+            alert('Não foi possível conectar ao servidor. Verifique sua conexão.');
+        });
+    }
+</script>
+
+</body>
+</html>
