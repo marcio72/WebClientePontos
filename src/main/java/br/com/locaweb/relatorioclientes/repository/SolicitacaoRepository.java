@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface SolicitacaoRepository extends JpaRepository<SolicitacaoManutencao, Long> {
 	
-	List<SolicitacaoManutencao> findByStatusTrue();
+	List<SolicitacaoManutencao> findByStatusTrueOrderByIdDesc();
 
 }
 

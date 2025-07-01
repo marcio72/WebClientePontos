@@ -23,7 +23,7 @@ public class SolicitacaoWebController {
     
     @GetMapping("/solicitacoes_abertas")
     public String listarSolicitacoesAbertas(Model model) {
-        List<SolicitacaoManutencao> abertas = solicitacaoRepository.findByStatusTrue();
+        List<SolicitacaoManutencao> abertas = solicitacaoRepository.findByStatusTrueOrderByIdDesc();
         model.addAttribute("solicitacoes", abertas);
         return "solicitacoes_abertas";
     }

@@ -93,7 +93,7 @@ public class SolicitacaoController {
     	
     @GetMapping
     public ResponseEntity<List<SolicitacaoResponseDTO>> listarSolicitacoesComProblemas() {
-        List<SolicitacaoResponseDTO> resultado = solicitacaoRepo.findByStatusTrue().stream().map(s -> {
+        List<SolicitacaoResponseDTO> resultado = solicitacaoRepo.findByStatusTrueOrderByIdDesc().stream().map(s -> {
             SolicitacaoResponseDTO dto = new SolicitacaoResponseDTO();
             dto.setId(s.getId()); 
             dto.setClienteId(s.getCliente().getCodCliente()); // LINHA ADICIONADA
