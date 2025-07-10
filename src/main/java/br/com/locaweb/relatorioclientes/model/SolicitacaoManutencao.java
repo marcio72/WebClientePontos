@@ -43,8 +43,11 @@ public class SolicitacaoManutencao {
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
@@ -63,7 +66,8 @@ public class SolicitacaoManutencao {
 
 
     @Column(name = "data_solicitacao")
-    private LocalDate dataSolicitacao;
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    private LocalDateTime dataSolicitacao;
 
     @Column(name = "status")
     private Boolean status;

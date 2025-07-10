@@ -1,5 +1,6 @@
 package br.com.locaweb.relatorioclientes.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -15,7 +16,7 @@ import lombok.*;
 @AllArgsConstructor
 
 @Entity
-@Table(name = "Usuario")
+@Table(name = "usuario")
 
 public class Usuario {
 
@@ -25,10 +26,12 @@ public class Usuario {
 	    private Long id;
 
 	    private String username;
-	    private String password;
+	    private String senha;
 
 	    private Integer leiturista;
-	    private Integer idLogin;
+	    
+	    @Column(name = "id_pontos")
+	    private Integer idPontos;
 
 	    // getters e setters
 	}

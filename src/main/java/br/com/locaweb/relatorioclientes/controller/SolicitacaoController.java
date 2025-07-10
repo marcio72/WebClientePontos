@@ -46,6 +46,7 @@ public class SolicitacaoController {
     public ResponseEntity<?> criar(@RequestBody SolicitacaoDTO dto) {
         SolicitacaoManutencao solicitacao = new SolicitacaoManutencao();
         solicitacao.setCliente(clienteRepository.findById(dto.getCliente()).orElseThrow());
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy hh:mm:ss");
         solicitacao.setDataSolicitacao(dto.getDataSolicitacao());
         solicitacao.setStatus(dto.getStatus().TRUE);
 

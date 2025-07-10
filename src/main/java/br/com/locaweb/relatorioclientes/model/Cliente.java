@@ -32,6 +32,8 @@ public class Cliente {
     
     @Column(name = "cont")
     private String contato;
+    
+    private Integer leiturista;
 
     
 

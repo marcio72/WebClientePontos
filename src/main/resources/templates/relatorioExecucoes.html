@@ -86,7 +86,7 @@
               <td th:text="${exec.descricaoProblema}">Problema</td>
               <td th:text="${exec.descricao}">Execução</td>
               <td th:text="${exec.tecnico}">Técnico</td>
-              <td th:text="${#temporals.format(exec.dataExecucao, 'dd/MM/yyyy')}">Data</td>
+              <td th:text="${#temporals.format(exec.dataExecucao, 'dd/MM/yyyy HH:mm:ss')}">Data</td>
               <td>
                 <a th:if="${!exec.pdfGerado}"
                    th:href="@{'/execucao/' + ${exec.id} + '/pdf'}"

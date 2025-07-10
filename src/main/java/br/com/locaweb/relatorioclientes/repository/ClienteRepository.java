@@ -12,8 +12,14 @@ import java.util.Optional;
 
 public interface ClienteRepository extends JpaRepository<Cliente, Long> {
 	List<Cliente> findAllByOrderByCodClienteDesc();
-
-    List<Cliente> findByAtivoOrderByCodClienteAscLogradouroAsc(Boolean ativo);
+    
+	List<Cliente> findByAtivoOrderByCodClienteAscLogradouroAsc(Boolean ativo);
+    
+	List<Cliente> findByAtivoTrueOrderByCodClienteDesc();
+    
+	List<Cliente> findByAtivoTrue();
+    
+	List<Cliente> findByLeituristaAndAtivoTrueOrderByCodClienteDesc(Integer leiturista);
 
     //List<Cliente> cliente = clienteRepository.findById(id);
     
@@ -22,11 +28,6 @@ public interface ClienteRepository extends JpaRepository<Cliente, Long> {
     Page<Cliente> findByAtivoTrueOrderByCodClienteDesc(Pageable pageable);
 
     Page<Cliente> findByNomClienteContainingIgnoreCaseAndAtivoTrueOrderByCodClienteDesc(String nome, Pageable pageable);
-
-      List<Cliente> findByAtivoTrueOrderByCodClienteDesc();
-      List<Cliente> findByAtivoTrue();  
-
-    
 
     // ✅ Método com múltiplos filtros
    /* @Query("SELECT c FROM Cliente c WHERE c.ativo = true "
@@ -39,8 +40,7 @@ public interface ClienteRepository extends JpaRepository<Cliente, Long> {
     	                                    @Param("dataFim") LocalDate dataFim,
     	                                    Pageable pageable);
 }*/
-
-      
+    
       @Query("SELECT c FROM Cliente c WHERE c.ativo = true "
     	         + "AND (:nome IS NULL OR UPPER(c.nomCliente) LIKE UPPER(CONCAT('%', :nome, '%'))) "
     	         + "AND (:dataInicio IS NULL OR DATE(c.dtCadastro) >= :dataInicio) "

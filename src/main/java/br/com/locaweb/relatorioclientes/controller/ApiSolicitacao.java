@@ -1,5 +1,6 @@
 package br.com.locaweb.relatorioclientes.controller;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -10,9 +11,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import br.com.locaweb.relatorioclientes.DTO.ExecucaoDTO;
+import br.com.locaweb.relatorioclientes.model.Cliente;
 import br.com.locaweb.relatorioclientes.model.ExecucaoManutencao;
+import br.com.locaweb.relatorioclientes.model.Usuario;
+import br.com.locaweb.relatorioclientes.repository.ClienteRepository;
 import br.com.locaweb.relatorioclientes.repository.ExecucaoRepository;
 import br.com.locaweb.relatorioclientes.repository.SolicitacaoManutencaoRepository;
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class ApiSolicitacao {
@@ -22,6 +27,11 @@ public class ApiSolicitacao {
 
     @Autowired
     private SolicitacaoManutencaoRepository solicitacaoRepository;
+    
+    @Autowired
+    private ClienteRepository clienteRepository;
+    
+    
 
     @GetMapping("/relatorioExecucoes")
     public String listarComPaginacao(Model model,
@@ -93,7 +103,50 @@ public class ApiSolicitacao {
         model.addAttribute("totalPaginas", (int) Math.ceil((double) total / size));
         model.addAttribute("busca", busca);
         model.addAttribute("pdf", pdf);
+        model.addAttribute("dataAtual", LocalDateTime.now());
 
         return "relatorioExecucoes";
     }
+    
+    /*@GetMapping("/form_solicitacao")
+    public String formSolicitacao(Model model, HttpSession session) {
+        Usuario usuario = (Usuario) session.getAttribute("usuarioLogado");
+
+        if (usuario != null) {
+            Integer leiturista = usuario.getLeiturista();
+            List<Cliente> clientes = clienteRepository.findByLeituristaAndAtivoTrueOrderByCodClienteDesc(leiturista);
+            model.addAttribute("clientes", clientes);
+        } else {
+            // se não estiver logado, redireciona para login
+            return "redirect:/login";
+        }
+        //return "menu";
+        return "form_solicitacao";
+    }*/
+    
+    @GetMapping("/form_solicitacao")
+    public String formSolicitacao(Model model, HttpSession session) {
+        Usuario usuario = (Usuario) session.getAttribute("usuarioLogado");
+
+        if (usuario != null) {
+            Integer leiturista = usuario.getLeiturista();
+            List<Cliente> clientes;
+
+            if (leiturista == 0) {
+                // Usuário com leiturista 0 vê todos os clientes ativos
+                clientes = clienteRepository.findByAtivoTrueOrderByCodClienteDesc();
+            } else {
+                // Os demais só veem os clientes atribuídos a eles
+                clientes = clienteRepository.findByLeituristaAndAtivoTrueOrderByCodClienteDesc(leiturista);
+            }
+
+            model.addAttribute("clientes", clientes);
+            return "form_solicitacao";
+        } else {
+            return "redirect:/login";
+        }
+    }
+
+
+
 }

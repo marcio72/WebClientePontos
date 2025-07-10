@@ -119,7 +119,8 @@ public class RelatorioPdfController {
         dadosPrincipais.addCell(celulaTexto("Cliente:", rotuloFont, Element.ALIGN_LEFT));
         dadosPrincipais.addCell(celulaTexto(execucao.getSolicitacaoManutencao().getCliente().getNomCliente(), textoMonoFont, Element.ALIGN_LEFT));
         dadosPrincipais.addCell(celulaTexto("Data:", rotuloFont, Element.ALIGN_LEFT));
-        dadosPrincipais.addCell(celulaTexto(execucao.getDataExecucao().toString(), textoMonoFont, Element.ALIGN_LEFT));
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        dadosPrincipais.addCell(celulaTexto(execucao.getDataExecucao().format(formatter).toString(), textoMonoFont, Element.ALIGN_LEFT));
         doc.add(dadosPrincipais);
 
         // Técnico
