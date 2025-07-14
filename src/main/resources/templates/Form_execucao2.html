@@ -6,22 +6,26 @@
   <title>Execução de Manutenção</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <script>
     let solicitacoes = {};
     const ID_CLIENTE_GENERICO_INSTALACAO = 1;
 
+    // 1. Carrega todas as solicitações abertas via API
     window.onload = () => {
         fetch('/api/solicitacao')
             .then(res => res.json())
             .then(data => {
                 const select = document.getElementById('solicitacao_cliente');
                 select.innerHTML = '<option selected disabled value="">Selecione a solicitação...</option>';
+
                 data.forEach((solicitacao) => {
                     const option = document.createElement('option');
                     option.value = solicitacao.id;
                     option.text = solicitacao.cliente;
                     option.setAttribute('data-cliente-id', solicitacao.clienteId);
                     select.appendChild(option);
+
                     solicitacoes[solicitacao.id] = solicitacao;
                 });
             })
@@ -31,36 +35,49 @@
             });
     };
 
+    // 2. Decide qual parte do formulário mostrar/habilitar com base na seleção
     function atualizarFormulario() {
         const select = document.getElementById('solicitacao_cliente');
         const solicitacaoId = select.value;
         if (!solicitacaoId) return;
 
         const clienteId = parseInt(select.options[select.selectedIndex].getAttribute('data-cliente-id'));
+        
         const formManutencao = document.getElementById('form-manutencao');
         const infoInstalacao = document.getElementById('info-instalacao');
         const btnConfirmar = document.getElementById('btn-confirmar-execucao');
         const btnCadastrar = document.getElementById('btn-efetivar-cadastro');
         const maquinaSelect = document.getElementById('maquina_execucao_select');
         const btnAdicionar = document.getElementById('btn-adicionar-execucao');
+
+        // Limpa execuções anteriores ao trocar de solicitação
         document.getElementById('execucoes_container').innerHTML = '';
 
         if (clienteId === ID_CLIENTE_GENERICO_INSTALACAO) {
-            formManutencao.style.display = 'none';
-            infoInstalacao.style.display = 'block';
-            btnConfirmar.style.display = 'none';
-            btnCadastrar.style.display = 'inline-block';
+            // É uma INSTALAÇÃO
+            formManutencao.style.display = 'none'; // Esconde a área de manutenção
+            infoInstalacao.style.display = 'block'; // Mostra a área de info da instalação
+            btnConfirmar.style.display = 'none'; // Esconde o botão de confirmar
+            btnCadastrar.style.display = 'inline-block'; // Mostra o botão de cadastrar
+
+            // Mostra a descrição da instalação para o usuário
             const descricaoInstalacao = solicitacoes[solicitacaoId].problemas[0].descricao;
             document.getElementById('detalhes-instalacao').innerText = descricaoInstalacao;
+
         } else {
-            formManutencao.style.display = 'block';
-            infoInstalacao.style.display = 'none';
-            btnConfirmar.style.display = 'inline-block';
-            btnCadastrar.style.display = 'none';
+            // É uma MANUTENÇÃO NORMAL
+            formManutencao.style.display = 'block'; // Garante que a área de manutenção está visível
+            infoInstalacao.style.display = 'none'; // Esconde a área de instalação
+            btnConfirmar.style.display = 'inline-block'; // Mostra o botão de confirmar
+            btnCadastrar.style.display = 'none'; // Esconde o botão de cadastrar
+            
+            // Habilita os campos de manutenção
             maquinaSelect.disabled = false;
             btnAdicionar.disabled = false;
             btnConfirmar.disabled = false;
 
+
+            // Popula o dropdown de máquinas
             maquinaSelect.innerHTML = '<option selected disabled value="">Escolha uma máquina</option>';
             if (solicitacoes[solicitacaoId] && solicitacoes[solicitacaoId].problemas) {
                 solicitacoes[solicitacaoId].problemas.forEach((p) => {
@@ -74,18 +91,22 @@
         }
     }
 
+    // 3. Redireciona para o cadastro (Funcionalidade de Instalação)
     function iniciarCadastroDePonto() {
         const solicitacaoId = document.getElementById('solicitacao_cliente').value;
         if (!solicitacaoId) return;
+
         const descricaoCompleta = solicitacoes[solicitacaoId].problemas[0].descricao;
         let nomePonto = '';
         const match = descricaoCompleta.match(/NOVO PONTO: (.*)/);
         if (match && match[1]) {
             nomePonto = match[1].split('\n')[0].trim();
         }
+        
         window.location.href = `/clientes/novo-com-maquinas?nomePonto=${encodeURIComponent(nomePonto)}`;
     }
 
+    // 4. Adiciona formulário de execução (Funcionalidade Original de Manutenção)
     function adicionarMaquinaExecucao() {
         const select = document.getElementById('maquina_execucao_select');
         const container = document.getElementById('execucoes_container');
@@ -95,22 +116,7 @@
         const selectedText = select.options[select.selectedIndex].text;
         const descricaoProblema = select.options[select.selectedIndex].getAttribute('data-descricao');
 
-        if (document.getElementById('execucao_' + selectedId)) return;
-
-        const tecnicoNome = new URLSearchParams(window.location.search).get('tecnico') || "";
-
-        const now = new Date();
-        function formatDateTimeLocal(date) {
-        	  const pad = n => n.toString().padStart(2, '0');
-        	  const year = date.getFullYear();
-        	  const month = pad(date.getMonth() + 1);
-        	  const day = pad(date.getDate());
-        	  const hours = pad(date.getHours());
-        	  const minutes = pad(date.getMinutes());
-        	  return `${year}-${month}-${day}T${hours}:${minutes}`;
-        	}
-
-        	const dataHora = formatDateTimeLocal(new Date());
+        if (document.getElementById('execucao_' + selectedId)) return; // Evita duplicados
 
         const div = document.createElement('div');
         div.className = 'mb-3 p-3 border rounded bg-light';
@@ -120,11 +126,11 @@
             <div class="row mb-2">
                 <div class="col-md-4">
                     <label class="form-label small">Data da Execução</label>
-                    <input type="datetime-local" class="form-control" name="data_execucao_${selectedId}" value="${dataHora}" readonly>
+                    <input type="date" class="form-control" name="data_execucao_${selectedId}">
                 </div>
                 <div class="col-md-4">
                     <label class="form-label small">Técnico</label>
-                    <input type="text" class="form-control" name="tecnico_${selectedId}" value="${tecnicoNome}" readonly>
+                    <input type="text" class="form-control" name="tecnico_${selectedId}" placeholder="Nome do técnico">
                 </div>
             </div>
             <label class="form-label small">O que foi feito</label>
@@ -133,6 +139,7 @@
         container.appendChild(div);
     }
 
+    // 5. Confirma as execuções (Funcionalidade Original de Manutenção)
     function confirmarExecucoes() {
         const solicitacaoId = document.getElementById('solicitacao_cliente').value;
         if (!solicitacaoId) {
@@ -148,7 +155,7 @@
             const tecnico = div.querySelector(`[name='tecnico_${id}']`).value;
             const descricao = div.querySelector(`[name='descricao_execucao_${id}']`).value;
 
-            if (data && tecnico && descricao) {
+            if (data && tecnico && descricao) { // Validação simples
                 execucoes.push({
                     problemaId: parseInt(id),
                     dataExecucao: data,
@@ -163,7 +170,7 @@
             alert("Nenhuma execução foi preenchida corretamente. Preencha todos os campos.");
             return;
         }
-
+        
         fetch('/execucao/execucao', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -195,8 +202,11 @@
           <div class="mb-3">
             <label for="solicitacao_cliente" class="form-label">Selecione o Serviço</label>
             <select id="solicitacao_cliente" class="form-select" onchange="atualizarFormulario()">
+              <!-- Opções carregadas via JavaScript -->
             </select>
           </div>
+
+          <!-- Div para Manutenção Normal (visível por padrão, mas desabilitada) -->
           <div id="form-manutencao">
             <div class="row mb-3">
               <div class="col-md-10">
@@ -213,22 +223,25 @@
             </div>
             <div id="execucoes_container"></div>
           </div>
+
+          <!-- Div para Informações de Instalação (escondida por padrão) -->
           <div id="info-instalacao" style="display: none;" class="alert alert-info">
               <h5 class="alert-heading">Pedido de Instalação</h5>
-              <p>Esta é uma solicitação para instalar equipamentos em um novo ponto...</p>
+              <p>Esta é uma solicitação para instalar equipamentos em um novo ponto. Após a execução, clique no botão "Efetivar Cadastro" para registrar o cliente no sistema.</p>
               <hr>
               <p class="mb-0 fw-bold">Detalhes:</p>
               <p id="detalhes-instalacao" style="white-space: pre-wrap;"></p>
           </div>
+          
           <div class="mt-4 d-flex justify-content-between">
             <a href="/menu" class="btn btn-outline-secondary">Voltar ao Menu</a>
             <div>
-              <button id="btn-confirmar-execucao" type="button" class="btn btn-success" onclick="confirmarExecucoes()" disabled>
-                <i class="bi bi-check-circle"></i> Confirmar Execuções
-              </button>
-              <button id="btn-efetivar-cadastro" type="button" class="btn btn-primary" onclick="iniciarCadastroDePonto()" style="display: none;">
-                <i class="bi bi-person-plus-fill"></i> Efetivar Cadastro do Ponto
-              </button>
+                <button id="btn-confirmar-execucao" type="button" class="btn btn-success" onclick="confirmarExecucoes()" disabled>
+                  <i class="bi bi-check-circle"></i> Confirmar Execuções
+                </button>
+                <button id="btn-efetivar-cadastro" type="button" class="btn btn-primary" onclick="iniciarCadastroDePonto()" style="display: none;">
+                  <i class="bi bi-person-plus-fill"></i> Efetivar Cadastro do Ponto
+                </button>
             </div>
           </div>
         </form>

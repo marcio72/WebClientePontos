@@ -1,6 +1,7 @@
 package br.com.locaweb.relatorioclientes.DTO;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import br.com.locaweb.relatorioclientes.model.Cliente;
 import lombok.*;
@@ -13,7 +14,7 @@ public class ExecucaoDTO {
     private String nomeMaquina; 
     private String descricaoProblema;
     private String descricao;
-    private LocalDate DataExecucao;
+    private LocalDateTime DataExecucao;
     private String tecnico;
     private boolean pdfGerado;
 

@@ -57,7 +57,7 @@ public class ExecucaoManutencaoController {
 
 	    @PostMapping("/salvar")
 	    public String salvar(@ModelAttribute ExecucaoManutencao execucao) {
-	        execucao.setDataExecucao(LocalDate.now());
+	        execucao.setDataExecucao(LocalDateTime.now());
 
 	        // Atualiza status da solicitação para 'false' (resolvida)
 	        SolicitacaoManutencao solicitacao = execucao.getSolicitacaoManutencao();
@@ -101,6 +101,7 @@ public class ExecucaoManutencaoController {
 	            ExecucaoManutencao execucao = new ExecucaoManutencao();
 	            execucao.setProblema(problema);
 	            execucao.setSolicitacaoManutencao(solicitacao); 
+	           
 	            execucao.setDataExecucao(dto.getDataExecucao());
 	            execucao.setTecnico(dto.getTecnico());
 	            execucao.setDescricao(dto.getDescricao());

@@ -3,6 +3,8 @@ package br.com.locaweb.relatorioclientes.model;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Entity
@@ -21,7 +23,7 @@ public class ExecucaoManutencao {
     private String descricao;
 
     @Column(name = "data_execucao")
-    private LocalDate dataExecucao;
+    private LocalDateTime dataExecucao;
 
     // --- CORREÇÃO AQUI ---
     // A anotação foi alterada de @OneToOne para @ManyToOne, que é a relação correta.

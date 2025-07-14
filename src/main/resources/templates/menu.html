@@ -71,13 +71,17 @@
     
     <!-- NOVO BOTÃO DE INSTALAÇÃO ADICIONADO 
      <a href="/form_instalacao" class="btn btn-info w-100 menu-btn"><i class="bi bi-box-arrow-in-down"></i> Nova Instalação</a> -->
-    <div th:if="${session.usuarioLogado}" class="d-flex justify-content-between align-items-center mb-3">
-  
-  		<a href="#" class="text-decoration-none text-info">
-    		<i class="bi bi-person-circle"></i>
-    	<strong th:text="${session.usuarioLogado.username}">Usuário</strong> </a>
+    <div th:if="${session.usuarioLogado != null}" class="d-flex justify-content-between align-items-center mb-3">
+  <a href="#" class="text-decoration-none text-light">
+    <i class="bi bi-person-circle"> - </i>
+    <strong th:text="${session.usuarioLogado.username}">Usuário</strong>
+  </a>
+</div>
 
-    </div>
+<div th:if="${session.usuarioLogado == null}" class="text-danger mb-3">
+  Usuário não autenticado
+</div>
+
 
     
     
@@ -85,10 +89,12 @@
     <!-- Botão de Manutenção (antiga "Nova Solicitação") -->
     <a href="/form_solicitacao" class="btn btn-warning w-100 menu-btn"><i class="bi bi-tools"></i> Nova Manutenção</a>
     
-    <a href="/form_execucao" class="btn btn-success w-100 menu-btn"> <i class="bi bi-check-square"></i> Executar Manutenção</a>
+    <a th:href="@{'/form_execucao?tecnico=' + ${session.usuarioLogado.username}}" class="btn btn-success w-100 menu-btn"> <i class="bi bi-check-square"></i> Executar Manutenção</a>
+    
+    <!--<a href="/form_execucao" class="btn btn-success w-100 menu-btn"> <i class="bi bi-check-square"></i> Executar Manutenção</a> --> 
     <a href="/solicitacoes_abertas" class="btn btn-danger w-100 menu-btn"> Solicitações Abertas</a>
     <a href="/relatorioExecucoes" class="btn btn-primary w-100 menu-btn"> Solicitações Executadas</a>
-  	<a href="/logout" class="text-danger text-decoration-none">Sair</a>
+  	<a href="/logout" class="text-light text-decoration-none">Sair</a>
   
   </div>
 

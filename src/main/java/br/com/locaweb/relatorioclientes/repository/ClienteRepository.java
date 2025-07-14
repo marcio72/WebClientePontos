@@ -20,6 +20,8 @@ public interface ClienteRepository extends JpaRepository<Cliente, Long> {
 	List<Cliente> findByAtivoTrue();
     
 	List<Cliente> findByLeituristaAndAtivoTrueOrderByCodClienteDesc(Integer leiturista);
+	List<Cliente> findByLeituristaInAndAtivoTrueOrderByCodClienteDesc(List<Integer> leituristas);
+
 
     //List<Cliente> cliente = clienteRepository.findById(id);
     

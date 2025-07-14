@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping("/api/execucoes")
@@ -32,7 +33,7 @@ public class ExecucaoController {
             return ResponseEntity.badRequest().body("Solicitação não encontrada.");
         }
 
-        execucao.setDataExecucao(LocalDate.now());
+        execucao.setDataExecucao(LocalDateTime.now());
         execucao.setSolicitacaoManutencao(solicitacao);
 
         solicitacao.setStatus(false); // marcar como resolvida

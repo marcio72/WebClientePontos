@@ -126,16 +126,19 @@
         <!-- <div class="g-recaptcha mb-3" data-sitekey="SUA_CHAVE_DO_SITE"></div> -->
 
 	<!-- ...dentro do <form> -->
-	<a href="#" class="forgot-password">Esqueci minha senha</a>
+	
 
 	<!-- ALERTA DE ERRO -->
 	<div th:if="${erro}" class="alert alert-danger p-2 mt-3" role="alert">
   		<i class="bi bi-x-circle-fill"></i> <span th:text="${erro}"></span>
 	</div>
 
-
-
         <button type="submit" class="btn btn-primary w-100">Entrar</button>
+        
+       <div class="mb-3 text-center mt-2"> 
+       <a href="#" class="forgot-password">Esqueci minha senha</a> 
+       </div>
+      
       </form>
     </div>
   </div>

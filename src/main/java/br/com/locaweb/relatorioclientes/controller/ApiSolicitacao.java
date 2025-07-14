@@ -48,8 +48,9 @@ public class ApiSolicitacao {
                 dto.setId(exec.getId());
                 dto.setTecnico(exec.getTecnico());
                 dto.setDescricao(exec.getDescricao());
-                dto.setDataExecucao(exec.getDataExecucao());
+                dto.setDataExecucao(exec.getDataExecucao());  
                 dto.setPdfGerado(exec.isPdfGerado());
+
 
                 if (exec.getSolicitacaoManutencao() != null && exec.getSolicitacaoManutencao().getCliente() != null) {
                     dto.setNomeCliente(exec.getSolicitacaoManutencao().getCliente().getNomCliente());
@@ -133,11 +134,15 @@ public class ApiSolicitacao {
             List<Cliente> clientes;
 
             if (leiturista == 0) {
-                // Usuário com leiturista 0 vê todos os clientes ativos
+                // Admin vê todos os clientes ativos
                 clientes = clienteRepository.findByAtivoTrueOrderByCodClienteDesc();
             } else {
-                // Os demais só veem os clientes atribuídos a eles
-                clientes = clienteRepository.findByLeituristaAndAtivoTrueOrderByCodClienteDesc(leiturista);
+                // Todos os usuários comuns veem:
+                // - clientes atribuídos a eles
+                // - clientes com leiturista = 10
+                clientes = clienteRepository.findByLeituristaInAndAtivoTrueOrderByCodClienteDesc(
+                    List.of(leiturista, 10)
+                );
             }
 
             model.addAttribute("clientes", clientes);
@@ -146,6 +151,7 @@ public class ApiSolicitacao {
             return "redirect:/login";
         }
     }
+
 
 
 
