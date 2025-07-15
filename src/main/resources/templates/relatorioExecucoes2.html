@@ -42,14 +42,6 @@
     </div>
 
     <div class="card-body">
-		<div class="mb-3 text-end">
-  			<a th:if="${usuarioLogado != null and usuarioLogado.username == 'Admin' or usuarioLogado.username == 'Mirlania'}"
-  			
-     			href="/relatorioExecucoesAvancado"
-     			class="btn btn-outline-dark">
-    			<i class="bi bi-shield-lock"></i> Modo Avançado </a>
-	</div>
-
 
       <!-- Filtros -->
       <form class="row g-3 mb-4" method="get" action="/relatorioExecucoes">

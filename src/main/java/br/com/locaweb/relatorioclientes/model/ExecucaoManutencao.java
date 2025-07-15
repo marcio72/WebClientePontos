@@ -30,6 +30,8 @@ public class ExecucaoManutencao {
     @ManyToOne 
     @JoinColumn(name = "solicitacao_id")
     private SolicitacaoManutencao solicitacaoManutencao;
+    
+    private Double valor;
 
     @ManyToOne
     @JoinColumn(name = "problema_id")

@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import br.com.locaweb.relatorioclientes.DTO.ExecucaoDTO;
@@ -34,11 +36,17 @@ public class ApiSolicitacao {
     
 
     @GetMapping("/relatorioExecucoes")
+    
+   
     public String listarComPaginacao(Model model,
+    								 HttpSession session,
                                      @RequestParam(defaultValue = "0") int page,
                                      @RequestParam(defaultValue = "5") int size,
                                      @RequestParam(required = false) String busca,
                                      @RequestParam(required = false) String pdf) {
+    	
+    	Usuario usuario = (Usuario) session.getAttribute("usuarioLogado");
+        model.addAttribute("usuarioLogado", usuario);
 
         List<ExecucaoDTO> todos = execucaoRepository.findAllWithCliente()
             .stream()
@@ -50,6 +58,9 @@ public class ApiSolicitacao {
                 dto.setDescricao(exec.getDescricao());
                 dto.setDataExecucao(exec.getDataExecucao());  
                 dto.setPdfGerado(exec.isPdfGerado());
+                
+                
+				
 
 
                 if (exec.getSolicitacaoManutencao() != null && exec.getSolicitacaoManutencao().getCliente() != null) {
@@ -125,6 +136,67 @@ public class ApiSolicitacao {
         return "form_solicitacao";
     }*/
     
+    
+    @GetMapping("/relatorioExecucoesAvancado")
+    public String mostrarRelatorioAvancado(Model model, HttpSession session) {
+        Usuario usuario = (Usuario) session.getAttribute("usuarioLogado");
+
+        // Se não estiver logado, redireciona para login
+        if (usuario == null) {
+            return "redirect:/login";
+        }
+
+        // Se estiver logado, mas não for admin, redireciona para a versão comum
+        if (!"Admin".equals(usuario.getUsername()) || (!"Mirlania".equals(usuario.getUsername()))) {
+        	List<ExecucaoDTO> execucoes = execucaoRepository.findAllWithCliente()
+                    .stream()
+                    .sorted((a, b) -> Long.compare(b.getId(), a.getId()))
+                    .map(exec -> {
+                        ExecucaoDTO dto = new ExecucaoDTO();
+                        dto.setId(exec.getId());
+                        dto.setTecnico(exec.getTecnico());
+                        dto.setDescricao(exec.getDescricao());
+                        dto.setDataExecucao(exec.getDataExecucao());
+                        dto.setValor(exec.getValor()); // <-- importante!
+                        dto.setPdfGerado(exec.isPdfGerado());
+
+                        if (exec.getSolicitacaoManutencao() != null && exec.getSolicitacaoManutencao().getCliente() != null) {
+                            dto.setNomeCliente(exec.getSolicitacaoManutencao().getCliente().getNomCliente());
+                        } else {
+                            dto.setNomeCliente("Desconhecido");
+                        }
+
+                        if (exec.getProblema() != null) {
+                            dto.setDescricaoProblema(exec.getProblema().getDescricao());
+                            if (exec.getProblema().getMaquina() != null) {
+                                dto.setNomeMaquina(exec.getProblema().getMaquina().getNom_maq());
+                            } else {
+                                dto.setNomeMaquina("Máquina desconhecida");
+                            }
+                        } else {
+                            dto.setDescricaoProblema("Sem problema registrado");
+                            dto.setNomeMaquina("Máquina não informada");
+                        }
+
+                        return dto;
+                    })
+                    .collect(Collectors.toList());
+
+                model.addAttribute("execucoes", execucoes);
+                model.addAttribute("dataAtual", LocalDateTime.now());
+
+                return "relatorioExecucoesAvancado";
+
+        	
+        	
+        	
+        }
+        
+      return "redirect:/relatorioExecucoes";
+            }
+
+    
+    
     @GetMapping("/form_solicitacao")
     public String formSolicitacao(Model model, HttpSession session) {
         Usuario usuario = (Usuario) session.getAttribute("usuarioLogado");
@@ -151,8 +223,20 @@ public class ApiSolicitacao {
             return "redirect:/login";
         }
     }
-
-
-
-
+    
+    
+    @PostMapping("/execucao/{id}/valor")
+    public String atualizarValor(@PathVariable Long id,
+                                 @RequestParam("valor") Double valor) {
+        ExecucaoManutencao execucao = execucaoRepository.findById(id).orElse(null);
+        if (execucao != null) {
+            execucao.setValor(valor);
+            execucaoRepository.save(execucao);
+        }
+        return "redirect:/relatorioExecucoesAvancado";
+    }
+    
+    
+    
+    
 }

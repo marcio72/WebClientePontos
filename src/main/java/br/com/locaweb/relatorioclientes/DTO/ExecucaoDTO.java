@@ -15,6 +15,7 @@ public class ExecucaoDTO {
     private String descricaoProblema;
     private String descricao;
     private LocalDateTime DataExecucao;
+    private Double valor;
     private String tecnico;
     private boolean pdfGerado;
 

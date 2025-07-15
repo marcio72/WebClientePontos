@@ -47,12 +47,12 @@ public interface ClienteRepository extends JpaRepository<Cliente, Long> {
     	         + "AND (:nome IS NULL OR UPPER(c.nomCliente) LIKE UPPER(CONCAT('%', :nome, '%'))) "
     	         + "AND (:dataInicio IS NULL OR DATE(c.dtCadastro) >= :dataInicio) "
     	         + "AND (:dataFim IS NULL OR DATE(c.dtCadastro) <= :dataFim) "
-    	         + "AND (:regiao IS NULL OR c.regiao = :regiao) " // <-- NOVA LINHA ADICIONADA
+    	         + "AND (:regiao IS NULL OR c.regiao = :regiao) " 
     	         + "ORDER BY c.codCliente DESC")
     	    Page<Cliente> findClientesFiltrados(@Param("nome") String nome,
     	                                        @Param("dataInicio") LocalDate dataInicio,
     	                                        @Param("dataFim") LocalDate dataFim,
-    	                                        @Param("regiao") Integer regiao, // <-- NOVO PARÂMETRO ADICIONADO
+    	                                        @Param("regiao") Integer regiao, 
     	                                        Pageable pageable);
 }
 
