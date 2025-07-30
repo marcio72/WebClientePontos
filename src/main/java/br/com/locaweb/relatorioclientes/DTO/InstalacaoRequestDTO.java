@@ -1,7 +1,7 @@
 package br.com.locaweb.relatorioclientes.DTO;
 
 import br.com.locaweb.relatorioclientes.model.Cliente;
-import java.time.LocalDate;
+
 import java.time.LocalDateTime;
 
 public class InstalacaoRequestDTO {
@@ -25,7 +25,7 @@ public class InstalacaoRequestDTO {
 
     public void setDescricaoInstalacao(String descricaoInstalacao) {
         this.descricaoInstalacao = descricaoInstalacao;
-    }
+    } 
 
     public LocalDateTime getDataSolicitacao() {
         return dataSolicitacao;

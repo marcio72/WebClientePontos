@@ -1,9 +1,9 @@
 package br.com.locaweb.relatorioclientes.DTO;
 
-import java.time.LocalDate;
+
+
 import java.time.LocalDateTime;
 
-import br.com.locaweb.relatorioclientes.model.Cliente;
 import lombok.*;
 
 @Getter
@@ -17,7 +17,5 @@ public class ExecucaoDTO {
     private LocalDateTime DataExecucao;
     private Double valor;
     private String tecnico;
-    private boolean pdfGerado;
-
-         
+    private boolean pdfGerado;        
 }

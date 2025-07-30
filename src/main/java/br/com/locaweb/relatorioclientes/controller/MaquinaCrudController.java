@@ -1,7 +1,7 @@
 
 package br.com.locaweb.relatorioclientes.controller;
 
-import br.com.locaweb.relatorioclientes.model.Cliente;
+
 import br.com.locaweb.relatorioclientes.model.Maquina;
 import br.com.locaweb.relatorioclientes.repository.ClienteRepository;
 import br.com.locaweb.relatorioclientes.repository.MaquinaRepository;

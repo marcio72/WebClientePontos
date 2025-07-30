@@ -1,6 +1,6 @@
 package br.com.locaweb.relatorioclientes.DTO;
 
-import java.time.LocalDate;
+
 import java.time.LocalDateTime;
 
 import lombok.*;
@@ -14,7 +14,5 @@ public class ExecucaoRequestDTO {
     private LocalDateTime dataExecucao;
     private String tecnico;
     private String descricao;
-
-    // Getters e setters
 }
 

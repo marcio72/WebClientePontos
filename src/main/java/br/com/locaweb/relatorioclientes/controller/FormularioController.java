@@ -1,6 +1,6 @@
 package br.com.locaweb.relatorioclientes.controller;
 
-import br.com.locaweb.relatorioclientes.model.Cliente;
+
 import br.com.locaweb.relatorioclientes.repository.ClienteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

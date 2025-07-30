@@ -1,5 +1,7 @@
 package br.com.locaweb.relatorioclientes.model;
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -32,6 +34,13 @@ public class Usuario {
 	    
 	    @Column(name = "id_pontos")
 	    private Integer idPontos;
+	    
+	    @Column(name = "ultimoacesso")
+	    private LocalDateTime ultimoAcesso;
+	    
+	    @Column(name = "telefone")
+	    private String telefone;
+
 
 	    // getters e setters
 	}

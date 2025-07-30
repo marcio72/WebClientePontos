@@ -12,11 +12,11 @@
         <relativePath/>
     </parent>
 
-    <groupId>br.com.locaweb</groupId>
-    <artifactId>relatorio-clientes</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-    <name>relatorio-clientes</name>
-    <description>Projeto Spring Boot para relatório de clientes</description>
+    	<groupId>br.com.locaweb</groupId>
+    	<artifactId>relatorio-clientes</artifactId>
+    	<version>0.0.1-SNAPSHOT</version>
+    	<name>relatorio-clientes</name>
+    	<description>Projeto Spring Boot para relatório de clientes</description>
 
     <properties>
         <java.version>17</java.version>
@@ -44,10 +44,19 @@
 
         <!-- MySQL -->
         <dependency>
-            <groupId>com.mysql</groupId>
-            <artifactId>mysql-connector-j</artifactId>
-            <scope>runtime</scope>
-        </dependency>
+    <groupId>com.mysql</groupId>
+    <artifactId>mysql-connector-j</artifactId>
+    <version>8.0.33</version> <!-- Essa linha estava faltando -->
+    <scope>runtime</scope>
+</dependency>
+
+
+
+<!-- JDBC (configura o DataSource) -->
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-jdbc</artifactId>
+</dependency>
 
         <!-- DevTools -->
         <dependency>

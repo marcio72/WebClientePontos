@@ -87,13 +87,13 @@
     
     
     <!-- Botão de Manutenção (antiga "Nova Solicitação") -->
-    <a href="/form_solicitacao" class="btn btn-warning w-100 menu-btn"><i class="bi bi-tools"></i> Nova Manutenção</a>
+    <a href="/form_solicitacao" class="btn btn-warning w-100 menu-btn"><i class="bi bi-tools"> </i> Nova Manutenção</a>
     
     <a th:href="@{'/form_execucao?tecnico=' + ${session.usuarioLogado.username}}" class="btn btn-success w-100 menu-btn"> <i class="bi bi-check-square"></i> Executar Manutenção</a>
     
     <!--<a href="/form_execucao" class="btn btn-success w-100 menu-btn"> <i class="bi bi-check-square"></i> Executar Manutenção</a> --> 
-    <a href="/solicitacoes_abertas" class="btn btn-danger w-100 menu-btn"> Solicitações Abertas</a>
-    <a href="/relatorioExecucoes" class="btn btn-primary w-100 menu-btn"> Solicitações Executadas</a>
+    <a href="/solicitacoes_abertas" class="btn btn-danger w-100 menu-btn"><i class="bi bi-exclamation-circle"></i> Solicitações Abertas</a>
+    <a href="/relatorioExecucoes" class="btn btn-primary w-100 menu-btn"><i class="bi bi-clipboard-data"></i> Solicitações Executadas</a>
   	<a href="/logout" class="text-light text-decoration-none">Sair</a>
   
   </div>

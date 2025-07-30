@@ -42,32 +42,55 @@
     </div>
 
     <div class="card-body">
-		<div class="mb-3 text-end">
-  			<a th:if="${usuarioLogado != null and usuarioLogado.username == 'Admin' or usuarioLogado.username == 'Mirlania'}"
-  			
-     			href="/relatorioExecucoesAvancado"
-     			class="btn btn-outline-dark">
-    			<i class="bi bi-shield-lock"></i> Modo Avançado </a>
-	</div>
-
+      <div class="mb-3 text-end">
+        <a th:if="${usuarioLogado != null and usuarioLogado.username == 'Admin' or usuarioLogado.username == 'Mirlania'}"
+           href="/relatorioExecucoesAvancado"
+           class="btn btn-outline-dark">
+          <i class="bi bi-shield-lock"></i> Modo Avançado
+        </a>
+      </div>
 
       <!-- Filtros -->
-      <form class="row g-3 mb-4" method="get" action="/relatorioExecucoes">
-        <div class="col-md-4">
-          <input type="text" class="form-control" name="busca" placeholder="Buscar por cliente ou técnico" th:value="${busca}">
+      <!-- Filtros -->
+      <form method="get" action="/relatorioExecucoes">
+        <div class="row row-cols-1 row-cols-md-4 g-3 mb-3">
+          <div class="col">
+            <input type="text" class="form-control" name="busca"
+                   placeholder="Cliente ou técnico" th:value="${busca}">
+          </div>
+
+          <div class="col">
+            <input type="text" class="form-control" name="problema"
+                   placeholder="Filtrar por problema" th:value="${problema}">
+          </div>
+
+          <div class="col">
+            <input type="text" class="form-control" name="execucao"
+                   placeholder="Filtrar por execução" th:value="${execucao}">
+          </div>
+
+          <div class="col">
+            <select class="form-select" name="pdf">
+              <option th:selected="${pdf == null}" value="">PDF Gerado: Todos</option>
+              <option th:selected="${pdf == 'true'}" value="true">Sim</option>
+              <option th:selected="${pdf == 'false'}" value="false">Não</option>
+            </select>
+          </div>
+
+
         </div>
-        <div class="col-md-3">
-          <select class="form-select" name="pdf">
-            <option th:selected="${pdf == null}" value="">PDF Gerado: Todos</option>
-            <option th:selected="${pdf == 'true'}" value="true">Sim</option>
-            <option th:selected="${pdf == 'false'}" value="false">Não</option>
-          </select>
-        </div>
-        <div class="col-md-5 d-flex justify-content-start align-items-center gap-2">
-          <button type="submit" class="btn btn-primary"><i class="bi bi-funnel"></i> Filtrar</button>
-          <a href="/relatorioExecucoes" class="btn btn-outline-secondary"><i class="bi bi-x-circle"></i> Limpar</a>
+
+        <div class="d-flex flex-wrap gap-2 mb-4">
+          <button type="submit" class="btn btn-primary">
+            <i class="bi bi-funnel"></i> Filtrar
+          </button>
+          <a href="/relatorioExecucoes" class="btn btn-outline-secondary">
+            <i class="bi bi-x-circle"></i> Limpar
+          </a>
         </div>
       </form>
+
+
 
       <a href="/menu" class="btn btn-secondary mb-3">Voltar ao Menu</a>
 
@@ -113,13 +136,15 @@
       <!-- Paginação -->
       <div class="d-flex justify-content-between align-items-center mt-3">
         <div th:if="${paginaAtual > 0}">
-          <a th:href="@{/relatorioExecucoes(page=${paginaAtual - 1}, size=5, busca=${busca}, pdf=${pdf})}" class="btn btn-outline-secondary">← Anterior</a>
+          <a th:href="@{/relatorioExecucoes(page=${paginaAtual - 1}, size=5, busca=${busca}, pdf=${pdf}, problema=${problema}, execucao=${execucao})}"
+             class="btn btn-outline-secondary">← Anterior</a>
         </div>
         <div>
           Página <span th:text="${paginaAtual + 1}">1</span> de <span th:text="${totalPaginas}">1</span>
         </div>
         <div th:if="${paginaAtual + 1 < totalPaginas}">
-          <a th:href="@{/relatorioExecucoes(page=${paginaAtual + 1}, size=5, busca=${busca}, pdf=${pdf})}" class="btn btn-outline-secondary">Próxima →</a>
+          <a th:href="@{/relatorioExecucoes(page=${paginaAtual + 1}, size=5, busca=${busca}, pdf=${pdf}, problema=${problema}, execucao=${execucao})}"
+             class="btn btn-outline-secondary">Próxima →</a>
         </div>
       </div>
 

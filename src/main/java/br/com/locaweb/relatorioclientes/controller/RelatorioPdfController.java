@@ -1,7 +1,6 @@
 package br.com.locaweb.relatorioclientes.controller;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
+
 import br.com.locaweb.relatorioclientes.model.ExecucaoManutencao;
 import br.com.locaweb.relatorioclientes.repository.ExecucaoRepository;
 import br.com.locaweb.relatorioclientes.service.ClienteService;
@@ -19,7 +18,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Element;

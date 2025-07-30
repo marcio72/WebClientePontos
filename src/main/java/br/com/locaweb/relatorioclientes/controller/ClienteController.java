@@ -1,11 +1,10 @@
 package br.com.locaweb.relatorioclientes.controller;
 
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
+
 import br.com.locaweb.relatorioclientes.model.Cliente;
-import br.com.locaweb.relatorioclientes.model.HistoricoAlteracao;
-import br.com.locaweb.relatorioclientes.repository.ClienteRepository;
+
+
 import br.com.locaweb.relatorioclientes.service.ClienteService;
 import br.com.locaweb.relatorioclientes.util.ConvertRegiao;
 
@@ -14,7 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
+
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -23,8 +22,7 @@ import java.util.stream.Collectors;
 @Controller
 public class ClienteController {
 	
-	@Autowired
-    private ClienteRepository clienteRepository;
+	
 
     /*@GetMapping("/form-maquinas")
     public String exibirFormulario(Model model) {

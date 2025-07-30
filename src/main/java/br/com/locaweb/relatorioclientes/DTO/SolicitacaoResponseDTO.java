@@ -1,6 +1,8 @@
 package br.com.locaweb.relatorioclientes.DTO;
-
 import java.util.List;
+
+
+
 
 public class SolicitacaoResponseDTO {
 	
@@ -64,12 +66,12 @@ public class SolicitacaoResponseDTO {
 
     public static class ProblemaDTO {
     	private Long idProblema; // novo campo!
-    	 public Long getIdProblema() {
+    	private String maquina;
+		private String descricao;
+    	 
+    	public Long getIdProblema() {
 			return idProblema;
 		}
-
-		 private String maquina;
-    	private String descricao;
     	
     	public String getMaquina() {
             return maquina;

@@ -1,7 +1,7 @@
 package br.com.locaweb.relatorioclientes.service;
 
 import br.com.locaweb.relatorioclientes.DTO.SolicitacaoResponseDTO;
-import br.com.locaweb.relatorioclientes.model.SolicitacaoManutencao;
+
 import br.com.locaweb.relatorioclientes.repository.SolicitacaoManutencaoRepository;
 import org.springframework.stereotype.Service;
 

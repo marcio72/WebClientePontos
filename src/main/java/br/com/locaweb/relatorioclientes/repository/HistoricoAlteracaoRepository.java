@@ -15,9 +15,6 @@ import java.util.List;
 }
 */
 
-import java.util.List;
-import org.springframework.data.jpa.repository.JpaRepository;
-import br.com.locaweb.relatorioclientes.model.HistoricoAlteracao;
 
 public interface HistoricoAlteracaoRepository extends JpaRepository<HistoricoAlteracao, Long> {
     

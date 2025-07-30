@@ -74,9 +74,11 @@
               <td>
                 <form th:action="@{'/execucao/' + ${exec.id} + '/valor'}" method="post"
                       class="d-flex align-items-center gap-2">
-                  <input type="number" step="0.01" name="valor"
-       						th:value="${exec.valor != null ? exec.valor : 0.00}"
-       						class="form-control form-control-sm text-success fw-bold" style="width: 90px;">
+
+                  <input type="text" name="valor"
+                         th:value="${#numbers.formatDecimal(exec.valor, 1, 'POINT', 2, 'COMMA')}"
+                         class="form-control form-control-sm text-success fw-bold" style="width: 90px;">
+
                   <button type="submit" class="btn btn-sm btn-success" title="Salvar valor">
                     <i class="bi bi-save"></i>
                   </button>
