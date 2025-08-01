@@ -189,12 +189,11 @@
 
         const partes = fullText.split('-');
 
-    // Remove espaços extras e pega só o segundo trecho (nome do jogo)
         const nomeJogo = partes.length > 1 ? partes[1].trim() : fullText;
 
 
 
-      // const nomeJogo = container.querySelector('span.text-danger').innerText.trim();
+
       if (container.querySelector('.troca-jogo-form')) return;
 
       const div = document.createElement('div');
@@ -234,10 +233,10 @@
       const label = container.querySelector('label.form-label');
       const fullText = label?.childNodes[0]?.textContent.trim() || "";
 
-    // Exemplo: fullText = "6012 - Bar Aberto"
+  
         const partes = fullText.split('-');
 
-    // Remove espaços extras e pega só o segundo trecho (nome do jogo)
+
         const leituraFinal  = partes.length > 1 ? partes[1].trim() : fullText;
 
 
