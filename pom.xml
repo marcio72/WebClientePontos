@@ -22,6 +22,19 @@
         <java.version>17</java.version>
     </properties>
 
+    <resources>
+        <resource>
+            <directory>src/main/resources</directory>
+            <filtering>false</filtering>
+            <excludes>
+                <exclude>application-utf8.properties</exclude>
+            </excludes>
+        </resource>
+    </resources>
+
+
+
+
     <dependencies>
 
         <!-- Spring Web -->
