@@ -186,7 +186,7 @@
       const label = container.querySelector('label.form-label');
       const fullText = label?.childNodes[0]?.textContent.trim() || "";
 
-    // Exemplo: fullText = "6012 - Bar Aberto"
+
         const partes = fullText.split('-');
 
     // Remove espaços extras e pega só o segundo trecho (nome do jogo)
@@ -240,7 +240,7 @@
     // Remove espaços extras e pega só o segundo trecho (nome do jogo)
         const leituraFinal  = partes.length > 1 ? partes[1].trim() : fullText;
 
-      // const leituraFinal = container.querySelector('label.form-label').innerText.trim();
+
       const entradaFinal = form.querySelector('.entrada-final').value;
       const saidaFinal = form.querySelector('.saida-final').value;
       const nomeInicial = form.querySelector('.nome-inicial').value;

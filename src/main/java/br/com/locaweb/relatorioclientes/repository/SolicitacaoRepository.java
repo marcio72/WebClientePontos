@@ -12,4 +12,3 @@ public interface SolicitacaoRepository extends JpaRepository<SolicitacaoManutenc
 	List<SolicitacaoManutencao> findByStatusTrueOrderByIdDesc();
 
 }
-
