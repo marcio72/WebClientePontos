@@ -7,6 +7,16 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
   <style>
+    .btn-roxo {
+    background-color: #5a32a3; /* #6f42c1; */
+    color: #fff; /*#00000;*/
+    border: none;
+  }
+
+  .btn-roxo:hover {
+    background-color: #6f42c1; /* tom mais escuro no hover */
+  }
+
     .troca-jogo-form {
       margin-top: 10px;
       padding: 10px;
@@ -173,8 +183,21 @@
         </div>
         <label class="form-label small">O que foi feito</label>
         <textarea class="form-control" name="descricao_execucao_${selectedId}" rows="4"></textarea>
-        <button type="button" class="btn btn-sm btn-warning mt-2" onclick="abrirTrocaJogo(this)">
+
+        <button type="button" class="btn btn-sm btn-roxo mt-2" onclick="abrirTrocaJogo(this)">
           <i class="bi bi-arrow-left-right"></i> Trocar de Jogo
+        </button>
+
+        <button type="button" class="btn btn-sm btn-roxo mt-2" onclick="abrirTrocaColetor(this)">
+          <i class="bi bi-arrow-left-right"></i> Trocar Coletor
+        </button>
+
+        <button type="button" class="btn btn-sm btn-info mt-2 d-none" onclick="">
+          <i class="bi bi-arrow-left-right"></i> Trocar Placa
+        </button>
+
+        <button type="button" class="btn btn-sm btn-success mt-2 d-none" onclick="">
+          <i class="bi bi-arrow-left-right"></i> Trocar Fonte
         </button>
       `;
       container.appendChild(div);
@@ -185,14 +208,8 @@
 
       const label = container.querySelector('label.form-label');
       const fullText = label?.childNodes[0]?.textContent.trim() || "";
-
-
-        const partes = fullText.split('-');
-
-        const nomeJogo = partes.length > 1 ? partes[1].trim() : fullText;
-
-
-
+      const partes = fullText.split('-');
+       const nomeJogo = partes.length > 1 ? partes[1].trim() : fullText;
 
       if (container.querySelector('.troca-jogo-form')) return;
 
@@ -215,9 +232,9 @@
             <input type="text" class="form-control form-control-sm mt-1 nome-inicial" placeholder="Novo nome do jogo">
             <div class="input-group mt-1">
               <span class="input-group-text">Entrada</span>
-              <input type="text" class="form-control entrada-inicial">
+              <input type="text" class="form-control entrada-inicial" value="0000">
               <span class="input-group-text">Saída</span>
-              <input type="text" class="form-control saida-inicial">
+              <input type="text" class="form-control saida-inicial" value="0000">
             </div>
           </div>
         </div>
@@ -226,18 +243,47 @@
       container.appendChild(div);
     }
 
+function abrirTrocaColetor(botao) {
+      const container = botao.closest('.execucao-bloco');
+
+     /* const label = container.querySelector('label.form-label');
+      const fullText = label?.childNodes[0]?.textContent.trim() || "";
+      const partes = fullText.split('-');
+       const nomeJogo = partes.length > 1 ? partes[1].trim() : fullText;*/
+
+      if (container.querySelector('.troca-jogo-form')) return;
+
+      const div = document.createElement('div');
+      div.className = 'troca-jogo-form';
+      div.innerHTML = `
+        <div class="row mb-2">
+          <div class="col-md-6">
+            <strong>TROCA DO COLETOR</strong><br>
+           
+            <div class="input-group mt-1">
+              <span class="input-group-text">Anterior </span>
+              <input type="text" class="form-control entrada-final" value="S/N">
+              <span class="input-group-text">Atual </span>
+              <input type="text" class="form-control saida-final">
+            </div>
+          </div>
+        </div>
+        <button type="button" class="btn btn-sm btn-primary" onclick="transferirTrocaColetor(this)">Transferir</button>
+      `;
+      container.appendChild(div);
+    }
+
+
+
+
     function transferirTrocaJogo(botao) {
       const form = botao.closest('.troca-jogo-form');
       const container = botao.closest('.execucao-bloco');
 
       const label = container.querySelector('label.form-label');
       const fullText = label?.childNodes[0]?.textContent.trim() || "";
-
-  
-        const partes = fullText.split('-');
-
-
-        const leituraFinal  = partes.length > 1 ? partes[1].trim() : fullText;
+      const partes = fullText.split('-');
+      const leituraFinal  = partes.length > 1 ? partes[1].trim() : fullText;
 
 
       const entradaFinal = form.querySelector('.entrada-final').value;
@@ -246,12 +292,34 @@
       const entradaInicial = form.querySelector('.entrada-inicial').value;
       const saidaInicial = form.querySelector('.saida-inicial').value;
 
-      const texto = `TROCA DE JOGO:\nLeitura Final: ${leituraFinal}\nEntrada Final: ${entradaFinal}\nSaída Final: ${saidaFinal}\nLeitura Inicial: ${nomeInicial}\nEntrada Inicial: ${entradaInicial}\nSaída Inicial: ${saidaInicial}`;
+      const texto = `TROCA DE JOGO\nLeitura Final\n${leituraFinal}\nEntrada Final: ${entradaFinal}\nSaída Final: ${saidaFinal}\nLeitura Inicial\n${nomeInicial}\nEntrada Inicial: ${entradaInicial}\nSaida Inicial: ${saidaInicial}`;
       const textarea = container.querySelector("textarea");
       textarea.value += (textarea.value ? "\n\n" : "") + texto;
 
       form.remove();
     }
+
+function transferirTrocaColetor(botao) {
+      const form = botao.closest('.troca-jogo-form');
+      const container = botao.closest('.execucao-bloco');
+
+   /* const label = container.querySelector('label.form-label');
+      const fullText = label?.childNodes[0]?.textContent.trim() || "";
+      const partes = fullText.split('-');
+      const leituraFinal  = partes.length > 1 ? partes[1].trim() : fullText; */
+
+
+      const anterior = form.querySelector('.entrada-final').value;
+      const atual = form.querySelector('.saida-final').value;
+
+      const texto = `TROCA DE COLETOR\nSN.: ${anterior}\nSN.: ${atual}`;
+      const textarea = container.querySelector("textarea");
+      textarea.value += (textarea.value ? "\n\n" : "") + texto;
+
+      form.remove();
+    }
+
+
 
     function confirmarExecucoes() {
       const solicitacaoId = document.getElementById('solicitacao_cliente').value;
