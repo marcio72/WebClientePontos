@@ -27,7 +27,6 @@ public class SolicitacaoResponseDTO {
 	public void setIdProblema(Long idProblema) {
 		this.idProblema = idProblema;
 	}
-
 	
     public Boolean getStatus() {
 		return status;
