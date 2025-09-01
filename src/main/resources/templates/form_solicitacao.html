@@ -85,22 +85,15 @@
 <script>
 function preencherDataAtual() {
 	  const agora = new Date();
-	  const ano = agora.getUTCFullYear();
-	  const mes = String(agora.getUTCMonth() + 1).padStart(2, '0');
-	  const dia = String(agora.getUTCDate()).padStart(2, '0');
-	  const hora = String(agora.getUTCHours()).padStart(2, '0');
-	  const minutos = String(agora.getUTCMinutes()).padStart(2, '0');
+	  const ano = agora.getFullYear();
+	  const mes = String(agora.getMonth() + 1).padStart(2, '0');
+	  const dia = String(agora.getDate()).padStart(2, '0');
+	  const hora = String(agora.getHours()).padStart(2, '0');
+	  const minutos = String(agora.getMinutes()).padStart(2, '0');
 	  document.getElementById('data_solicitacao').value = `${ano}-${mes}-${dia}T${hora}:${minutos}`;
 	}
   
   
-  
-
-  
-  
-  
-  
-
   window.onload = function () {
     preencherDataAtual();
   };

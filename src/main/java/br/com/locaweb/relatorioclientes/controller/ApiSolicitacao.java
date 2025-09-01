@@ -26,24 +26,17 @@ public class ApiSolicitacao {
 
     @Autowired
     private ExecucaoRepository execucaoRepository;
-
-   
-    
+  
     @Autowired
     private ClienteRepository clienteRepository;
     
-    
-
    /* @GetMapping("/relatorioExecucoes")
-    
-   
     public String listarComPaginacao(Model model,
     								 HttpSession session,
                                      @RequestParam(defaultValue = "0") int page,
                                      @RequestParam(defaultValue = "5") int size,
                                      @RequestParam(required = false) String busca,
-                                     @RequestParam(required = false) String pdf) {
-    	
+                                     @RequestParam(required = false) String pdf) {   	
     	Usuario usuario = (Usuario) session.getAttribute("usuarioLogado");
         model.addAttribute("usuarioLogado", usuario);
 
@@ -58,11 +51,7 @@ public class ApiSolicitacao {
                 dto.setDataExecucao(exec.getDataExecucao());  
                 dto.setPdfGerado(exec.isPdfGerado());
                 
-                
-				
-
-
-                if (exec.getSolicitacaoManutencao() != null && exec.getSolicitacaoManutencao().getCliente() != null) {
+               if (exec.getSolicitacaoManutencao() != null && exec.getSolicitacaoManutencao().getCliente() != null) {
                     dto.setNomeCliente(exec.getSolicitacaoManutencao().getCliente().getNomCliente());
                 } else {
                     dto.setNomeCliente("Desconhecido");
@@ -118,11 +107,12 @@ public class ApiSolicitacao {
 
         return "relatorioExecucoes";
     }*/
+    
     @GetMapping("/relatorioExecucoes")
     public String listarComPaginacao(Model model,
                                      HttpSession session,
                                      @RequestParam(defaultValue = "0") int page,
-                                     @RequestParam(defaultValue = "5") int size,
+                                     @RequestParam(defaultValue = "8") int size,
                                      @RequestParam(required = false) String busca,
                                      @RequestParam(required = false) String pdf,
                                      @RequestParam(required = false) String problema,
@@ -335,6 +325,7 @@ public class ApiSolicitacao {
         }
         return "redirect:/relatorioExecucoesAvancado";
     }*/
+    
 
     @PostMapping("/execucao/{id}/valor")
     public String atualizarValor(@PathVariable Long id, @RequestParam("valor") String valorStr) {

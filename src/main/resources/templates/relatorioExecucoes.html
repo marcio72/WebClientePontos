@@ -131,6 +131,7 @@
           <button id="fecharTodosBtn" type="button" class="btn btn-outline-secondary ms-auto">
             <i class="bi bi-arrows-collapse"></i> Fechar todos
           </button>-->
+
         </div>
       </form>
 
@@ -140,7 +141,7 @@
         <table class="table table-bordered table-hover align-middle">
           <thead class="table-light">
             <tr>
-              <th>ID</th>
+              <th>NF</th>
               <th>Cliente</th>
               <th>Máquina</th>
               <th>Problema</th>
@@ -203,7 +204,10 @@
                             <i class="bi bi-clipboard"></i> Copiar
                           </button>
                         </div>
-                        <div class="execucao-detalhe" th:text="${exec.descricao}">Descrição completa da execução...</div>
+
+                        <pre class="execucao-detalhe bg-light p-2 rounded border"
+                             style="font-family: 'Courier New', monospace; font-size: 0.95rem;"
+                             th:text="${exec.descricao}">Descrição completa da execução...</pre>
                         <div class="mt-2 small text-muted">
                           <span class="me-3">
                             <i class="bi bi-person"></i>
@@ -227,14 +231,14 @@
       <!-- Paginação -->
       <div class="d-flex justify-content-between align-items-center mt-3">
         <div th:if="${paginaAtual > 0}">
-          <a th:href="@{/relatorioExecucoes(page=${paginaAtual - 1}, size=5, busca=${busca}, pdf=${pdf}, problema=${problema}, execucao=${execucao})}"
+          <a th:href="@{/relatorioExecucoes(page=${paginaAtual - 1}, size=8, busca=${busca}, pdf=${pdf}, problema=${problema}, execucao=${execucao})}"
              class="btn btn-outline-secondary">← Anterior</a>
         </div>
         <div>
           Página <span th:text="${paginaAtual + 1}">1</span> de <span th:text="${totalPaginas}">1</span>
         </div>
         <div th:if="${paginaAtual + 1 < totalPaginas}">
-          <a th:href="@{/relatorioExecucoes(page=${paginaAtual + 1}, size=5, busca=${busca}, pdf=${pdf}, problema=${problema}, execucao=${execucao})}"
+          <a th:href="@{/relatorioExecucoes(page=${paginaAtual + 1}, size=8, busca=${busca}, pdf=${pdf}, problema=${problema}, execucao=${execucao})}"
              class="btn btn-outline-secondary">Próxima →</a>
         </div>
       </div>

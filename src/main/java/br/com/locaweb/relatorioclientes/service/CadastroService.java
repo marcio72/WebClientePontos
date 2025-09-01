@@ -28,7 +28,6 @@ public class CadastroService {
             maquina.setCodCliente(novoCliente.getCodCliente().intValue());
             maquinaRepository.save(maquina);
         }
-
         return novoCliente;
     }
 }

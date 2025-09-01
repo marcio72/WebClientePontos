@@ -48,7 +48,7 @@
         <table class="table table-bordered table-hover align-middle">
           <thead class="table-light">
             <tr>
-              <th>ID</th>
+              <th>NF</th>
               <th>Cliente</th>
               <th>Máquina</th>
               <th>Problema</th>
@@ -62,7 +62,7 @@
           <tbody>
             <tr th:each="exec : ${execucoes}"
                 th:classappend="${exec.pdfGerado} ? 'table-primary'">
-              <td th:text="${exec.id}">ID</td>
+              <td th:text="${exec.id}">NF</td>
               <td th:text="${exec.nomeCliente}">Cliente</td>
               <td th:text="${exec.nomeMaquina}">Máquina</td>
               <td th:text="${exec.descricaoProblema}">Problema</td>
