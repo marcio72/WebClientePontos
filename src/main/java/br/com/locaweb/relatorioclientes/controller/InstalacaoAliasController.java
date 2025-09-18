@@ -8,28 +8,23 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/instalacoes")
-public class InstalacaoController {
+public class InstalacaoAliasController {
 
     @Autowired
     private InstalacaoService instalacaoService;
 
-    /**
-     * Endpoint oficial: cadastra cliente + cria solicitação de instalação
-     */
-    @PostMapping("/novo-cliente")
-    public ResponseEntity<SolicitacaoManutencao> solicitarInstalacao(@RequestBody InstalacaoRequestDTO dto) {
+    @PostMapping("/api/instalacao")
+    public ResponseEntity<?> solicitarInstalacaoAlias(@RequestBody InstalacaoRequestDTO dto) {
         try {
             SolicitacaoManutencao solicitacao = instalacaoService.solicitarInstalacaoNovoCliente(dto);
             return ResponseEntity.ok(solicitacao);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(null);
+            return ResponseEntity
+                    .badRequest()
+                    .body("Falha ao salvar instalação (alias): " + e.getMessage());
         }
     }
 
-    /**
-     * Alias para manter compatibilidade com o frontend antigo
-     * POST /api/instalacao
-     */
-    // não rola
+
+
 }

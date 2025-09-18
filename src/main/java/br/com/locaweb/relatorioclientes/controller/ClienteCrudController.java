@@ -1,11 +1,14 @@
 package br.com.locaweb.relatorioclientes.controller;
 
+import br.com.locaweb.relatorioclientes.DTO.InstalacaoRequestDTO;
 import br.com.locaweb.relatorioclientes.model.Cliente;
 import br.com.locaweb.relatorioclientes.model.HistoricoAlteracao;
 import br.com.locaweb.relatorioclientes.model.Maquina;
+import br.com.locaweb.relatorioclientes.model.SolicitacaoManutencao;
 import br.com.locaweb.relatorioclientes.repository.ClienteRepository;
 import br.com.locaweb.relatorioclientes.repository.HistoricoAlteracaoRepository;
 import br.com.locaweb.relatorioclientes.repository.MaquinaRepository;
+import br.com.locaweb.relatorioclientes.service.InstalacaoService;
 import br.com.locaweb.relatorioclientes.util.ConvertRegiao;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -33,13 +37,31 @@ public class ClienteCrudController {
     @Autowired
     private ClienteRepository clienteRepository;
 
+    @Autowired
+    private InstalacaoService instalacaoService;
+
     @GetMapping("/novo")
     public String novoCliente(Model model) {
         model.addAttribute("cliente", new Cliente());
         return "formulario-cliente";
     }
-    
- // Dentro da classe br.com.locaweb.relatorioclientes.controller.ClienteCrudController
+
+
+    @PostMapping("/novo-cliente")
+    public ResponseEntity<?> solicitarInstalacao(@RequestBody InstalacaoRequestDTO dto) {
+        try {
+            SolicitacaoManutencao solicitacao = instalacaoService.solicitarInstalacaoNovoCliente(dto);
+            return ResponseEntity.ok(solicitacao);
+        } catch (Exception e) {
+            // logar o erro real
+            return ResponseEntity
+                    .badRequest()
+                    .body("Falha ao salvar instalação: " + e.getMessage());
+        }
+    }
+
+
+    // Dentro da classe br.com.locaweb.relatorioclientes.controller.ClienteCrudController
 
     @GetMapping("/novo-com-maquinas")
     public String novoClienteComMaquinas(Model model, @RequestParam(required = false) String nomePonto) {

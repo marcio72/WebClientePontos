@@ -107,7 +107,8 @@ public class ApiSolicitacao {
 
         return "relatorioExecucoes";
     }*/
-    
+
+
     @GetMapping("/relatorioExecucoes")
     public String listarComPaginacao(Model model,
                                      HttpSession session,

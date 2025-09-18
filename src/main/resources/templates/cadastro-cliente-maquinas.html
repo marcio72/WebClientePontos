@@ -25,7 +25,7 @@
         }
         /* Estilo para a legenda do fieldset */
         legend.scheduler-border {
-            font-size: 1rem !important; /* Tamanho da fonte */
+            font-size: 1rem !important;
             font-weight: 500 !important;
             text-align: left !important;
             width: auto;
@@ -58,7 +58,7 @@
                     <label class="form-label">Bairro</label>
                     <input type="text" id="bairro" class="form-control" required>
                 </div>
-                 <div class="col-md-4">
+                <div class="col-md-4">
                     <label class="form-label">Telefone</label>
                     <input type="text" id="telefone" class="form-control" required>
                 </div>
@@ -66,6 +66,13 @@
                     <label class="form-label">Contato</label>
                     <input type="text" id="contato" class="form-control">
                 </div>
+
+                <!-- NOVO CAMPO: LEITURISTA -->
+                <div class="col-md-4">
+                    <label class="form-label">Leiturista</label>
+                    <input type="text" id="leiturista" class="form-control" required>
+                </div>
+
                 <div class="col-md-4">
                     <label class="form-label">Região</label>
                     <select id="regiao" class="form-select" required>
@@ -84,7 +91,7 @@
 
             <h5 class="mb-3">2. Adicionar Máquinas</h5>
             <div class="card p-3 mb-3">
-                 <div class="row g-3">
+                <div class="row g-3">
                     <div class="col-md-4">
                         <label class="form-label">Nº da Máquina</label>
                         <input type="text" id="maq_nome" class="form-control">
@@ -98,11 +105,11 @@
                         <input type="text" id="maq_placa" class="form-control">
                     </div>
                     <div class="col-12">
-                         <label class="form-label">Observação</label>
+                        <label class="form-label">Observação</label>
                         <input type="text" id="maq_obs" class="form-control">
                     </div>
 
-                    <!-- Seção Leitura Inicial Melhorada -->
+                    <!-- Seção Leitura Inicial -->
                     <div class="col-12 mt-3">
                         <fieldset class="border p-3 rounded bg-light">
                             <legend class="float-none w-auto px-2 h6 scheduler-border text-muted">Leitura Inicial</legend>
@@ -130,9 +137,8 @@
 
             <h5 class="mb-3">Máquinas a serem Cadastradas</h5>
             <div id="maquinas_container">
-                 <p class="text-muted">Nenhuma máquina adicionada.</p>
+                <p class="text-muted">Nenhuma máquina adicionada.</p>
             </div>
-
 
             <div class="mt-4 d-flex justify-content-between">
                 <a href="/menu" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Voltar ao Menu</a>
@@ -145,8 +151,14 @@
 </div>
 
 <script>
+    /* ========= CONFIG ========= */
+    // URL do Form_execucao (com técnico fixo Admin)
+    const FORM_EXECUCAO_URL = 'http://localhost:8080/form_execucao?tecnico=Admin';
+
+    /* ========= ESTADO ========= */
     let maquinasAdicionadas = [];
 
+    /* ========= UI ========= */
     function toggleListaMaquinas() {
         const lista = document.getElementById('lista-maquinas-detalhes');
         if (lista) {
@@ -154,62 +166,26 @@
         }
     }
 
-    function adicionarMaquina() {
-        const nome = document.getElementById('maq_nome').value;
-        const jogo = document.getElementById('maq_jogo').value;
-        const placa = document.getElementById('maq_placa').value;
-        const obs = document.getElementById('maq_obs').value;
-        const entrada = document.getElementById('Entrada').value;
-        const saida = document.getElementById('Saida').value;
-
-
-        if (!nome || !jogo) {
-            alert('Preencha pelo menos o Nº da Máquina e o Nome do Jogo.');
-            return;
-        }
-
-        const maquina = {
-            nom_maq: nome,
-            nom_jogo: jogo,
-            numeroPlaca: placa,
-            obs: obs,
-            entrada: entrada, // Adiciona o campo
-            saida: saida      // Adiciona o campo
-        };
-
-        maquinasAdicionadas.push(maquina);
-        renderizarMaquinas();
-
-        // Limpa todos os campos do formulário da máquina
-        document.getElementById('maq_nome').value = '';
-        document.getElementById('maq_jogo').value = '';
-        document.getElementById('maq_placa').value = '';
-        document.getElementById('maq_obs').value = '';
-        document.getElementById('Entrada').value = '';
-        document.getElementById('Saida').value = '';
-        document.getElementById('maq_nome').focus();
-    }
-
     function renderizarMaquinas() {
         const container = document.getElementById('maquinas_container');
-        container.innerHTML = ''; 
+        container.innerHTML = '';
 
-        if(maquinasAdicionadas.length === 0){
-             container.innerHTML = '<p class="text-muted">Nenhuma máquina adicionada.</p>';
-             return;
+        if (maquinasAdicionadas.length === 0) {
+            container.innerHTML = '<p class="text-muted">Nenhuma máquina adicionada.</p>';
+            return;
         }
 
         const summaryLink = document.createElement('a');
         summaryLink.href = 'javascript:void(0);';
         summaryLink.className = 'summary-link mb-2 d-inline-block';
         summaryLink.onclick = toggleListaMaquinas;
-        summaryLink.innerHTML = `<i class="bi bi-hdd-stack-fill"></i> <strong>${maquinasAdicionadas.length}</strong> máquinas adicionadas (clique para ver/ocultar)`;
+        summaryLink.innerHTML = `<i class="bi bi-hdd-stack"></i> <strong>${maquinasAdicionadas.length}</strong> máquinas adicionadas (clique para ver/ocultar)`;
         container.appendChild(summaryLink);
-        
+
         const listContainer = document.createElement('div');
         listContainer.id = 'lista-maquinas-detalhes';
         listContainer.style.display = 'none';
-        
+
         maquinasAdicionadas.forEach((maq, index) => {
             const div = document.createElement('div');
             div.className = 'machine-card';
@@ -232,14 +208,60 @@
         container.appendChild(listContainer);
     }
 
+    /* ========= AÇÕES ========= */
+    function adicionarMaquina() {
+        const nome = document.getElementById('maq_nome').value;
+        const jogo = document.getElementById('maq_jogo').value;
+        const placa = document.getElementById('maq_placa').value;
+        const obs = document.getElementById('maq_obs').value;
+        const entrada = document.getElementById('Entrada').value;
+        const saida = document.getElementById('Saida').value;
+
+        if (!nome || !jogo) {
+            alert('Preencha pelo menos o Nº da Máquina e o Nome do Jogo.');
+            return;
+        }
+
+        const maquina = {
+            nom_maq: nome,
+            nom_jogo: jogo,
+            numeroPlaca: placa,
+            obs: obs,
+            entrada: entrada,
+            saida: saida
+        };
+
+        maquinasAdicionadas.push(maquina);
+        renderizarMaquinas();
+
+        // Limpa campos do formulário da máquina
+        document.getElementById('maq_nome').value = '';
+        document.getElementById('maq_jogo').value = '';
+        document.getElementById('maq_placa').value = '';
+        document.getElementById('maq_obs').value = '';
+        document.getElementById('Entrada').value = '';
+        document.getElementById('Saida').value = '';
+        document.getElementById('maq_nome').focus();
+
+        // Atualiza ponte
+        if (typeof sincronizarPonteExecucao === 'function') {
+            try { sincronizarPonteExecucao(); } catch (e) { console.warn(e); }
+        }
+    }
+
     function removerMaquina(index) {
         maquinasAdicionadas.splice(index, 1);
         renderizarMaquinas();
+
+        // Atualiza ponte
+        if (typeof sincronizarPonteExecucao === 'function') {
+            try { sincronizarPonteExecucao(); } catch (e) { console.warn(e); }
+        }
     }
 
     function salvarTudo() {
         const cliente = {
-            nomCliente: document.getElementById('nomCliente').value.toUpperCase(),
+            nomCliente: (document.getElementById('nomCliente').value || '').toUpperCase(),
             logradouro: document.getElementById('logradouro').value,
             bairro: document.getElementById('bairro').value,
             telefone: document.getElementById('telefone').value,
@@ -256,14 +278,15 @@
 
         const payload = {
             cliente: cliente,
-            maquinas: maquinasAdicionadas.map(m => ({ // Envia apenas os campos que o backend espera
+            maquinas: maquinasAdicionadas.map(m => ({
+                // Envia apenas o que o backend espera
                 nom_maq: m.nom_maq,
                 nom_jogo: m.nom_jogo,
                 numeroPlaca: m.numeroPlaca,
                 obs: m.obs
             }))
         };
-        
+
         fetch('/api/cadastros/cliente-com-maquinas', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -271,17 +294,93 @@
         })
         .then(response => {
             if (response.ok) {
-                alert('Cliente e máquinas cadastrados com sucesso!');
-                window.location.href = '/clientes/listar';
+                // 1) Gera um identificador único deste envio
+                const BRIDGE_KEY = 'form_execucao_o_que_foi_feito';
+                const BRIDGE_NONCE_KEY = 'form_execucao_bridge_nonce';
+                const nonce = String(Date.now());
+
+                // 2) Salva texto + nonce
+                try {
+                    const texto = montarResumoInstalacao();
+                    localStorage.setItem(BRIDGE_KEY, texto);
+                    localStorage.setItem(BRIDGE_NONCE_KEY, nonce);
+                } catch (_) {}
+
+                // 3) Mensagem para o form_execucao (opcional)
+                localStorage.setItem('form_execucao_msg', 'INSTALAÇÃO cadastrada e dados enviados para "O que foi feito".');
+
+                // 4) Volta para a MESMA aba do form_execucao, se foi de lá que veio
+                window.history.back();
             } else {
-                response.text().then(text => alert('Erro ao cadastrar: ' + text));
+                return response.text().then(text => {
+                    throw new Error(text || ('Status ' + response.status));
+                });
             }
         })
-        .catch(error => {
-            console.error('Erro de rede:', error);
-            alert('Não foi possível conectar ao servidor. Verifique sua conexão.');
+        .catch(err => {
+            console.error('Erro ao cadastrar:', err);
+            alert('Erro ao cadastrar: ' + (err && err.message ? err.message : err));
         });
     }
+
+    /* ========= PONTE COM O FORM_EXECUCAO (localStorage) ========= */
+    const BRIDGE_KEY = 'form_execucao_o_que_foi_feito';
+
+    /** Monta um texto-resumo formatado no padrão solicitado */
+    function montarResumoInstalacao() {
+        // Dados do cliente
+        const nomCliente = (document.getElementById('nomCliente').value || '').trim();
+        const logradouro = (document.getElementById('logradouro').value || '').trim();
+        const bairro = (document.getElementById('bairro').value || '').trim();
+        const telefone = (document.getElementById('telefone').value || '').trim();
+        const contato = (document.getElementById('contato').value || '').trim();
+        const leiturista = (document.getElementById('leiturista').value || '').trim();
+
+        // Cabeçalho no formato do exemplo
+        let resumo = `NOVO PONTO \n`;
+        resumo += `${nomCliente || '-'}\n`;
+        resumo += `${logradouro || '-'} - ${bairro || '-'}\n`;
+        resumo += `Contato: ${contato || '-'}\n`;
+        resumo += `Tel.: ${telefone || '-'}\n`;
+        resumo += `Leiturista: ${leiturista || '-'}\n\n`;
+
+        // Máquinas (LEITURA INICIAL)
+        if (Array.isArray(maquinasAdicionadas) && maquinasAdicionadas.length > 0) {
+            resumo += `LEITURA INICIAL \n`;
+            maquinasAdicionadas.forEach((m, i) => {
+                const num = m.nom_maq || '-';
+                const jogo = m.nom_jogo || '-';
+                const e = (m.entrada ?? '').toString().trim() || '0';
+                const s = (m.saida ?? '').toString().trim() || '0';
+                const placa = m.numeroPlaca || '-';
+                const obs = (m.obs || '').toString().trim();
+
+                resumo += `Maq.${num} - ${jogo} \n`;
+                resumo += `E-${e}\n`;
+                resumo += `S-${s}\n`;
+                resumo += `Pl.: ${placa}\n`;
+                if (obs) resumo += `${obs}\n`;
+
+                if (i < maquinasAdicionadas.length - 1) resumo += `\n`;
+            });
+        } else {
+            resumo += `Máquinas: (nenhuma adicionada)\n`;
+        }
+
+        return resumo;
+    }
+
+    /** Escreve/atualiza o texto no localStorage para o Form_execucao capturar */
+    function sincronizarPonteExecucao() {
+        try {
+            const texto = montarResumoInstalacao();
+            localStorage.setItem(BRIDGE_KEY, texto);
+        } catch (e) {
+            console.warn('Falha ao sincronizar ponte com o Form_execucao:', e);
+        }
+    }
+
+
 </script>
 
 </body>
