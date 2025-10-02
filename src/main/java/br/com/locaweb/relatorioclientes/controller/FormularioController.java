@@ -17,7 +17,6 @@ public class FormularioController {
     public String exibirFormulario(Model model) {
         //model.addAttribute("clientes", clienteRepository.findAllByOrderByCodClienteDesc());
         model.addAttribute("clientes", clienteRepository.findByAtivoTrueOrderByCodClienteDesc(null));
-
         return "form-maquinas";
     }
     /*@GetMapping("/form_solicitacao")

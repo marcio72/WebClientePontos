@@ -5,6 +5,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import java.util.List;
 
+
+
 public interface ExecucaoRepository extends CrudRepository<ExecucaoManutencao, Long> {
 
     @Query("SELECT e FROM ExecucaoManutencao e " +
