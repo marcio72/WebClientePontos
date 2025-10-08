@@ -257,9 +257,10 @@
         <i class="bi bi-arrow-left-right"></i> Trocar de Placa
       </button>
 
-      <button type="button" class="btn btn-sm btn-roxo" onclick="abrirTrocaInterface(this)">
-        <i class="bi bi-arrow-left-right"></i> Trocar de Interface
+      <button type="button" class="btn btn-sm btn-roxo" onclick="abrirTrocaMonitor(this)">
+        <i class="bi bi-arrow-left-right"></i> Trocar do Monitor
       </button>
+
 
 
 
@@ -364,6 +365,29 @@
     container.appendChild(div);
   }
 
+  function abrirTrocaMonitor(botao) {
+    const container = botao.closest('.execucao-bloco');
+    if (container.querySelector('.troca-jogo-form')) return;
+
+    const div = document.createElement('div');
+    div.className = 'troca-jogo-form';
+    div.innerHTML = `
+      <div class="row mb-2">
+        <div class="col-md-6">
+          <strong>TROCA DO MONITOR</strong><br>
+          <div class="input-group mt-1">
+            <span class="input-group-text">MT. Anterior</span>
+            <input type="text" class="form-control entrada-final" value="S/N">
+            <span class="input-group-text">MT. Atual</span>
+            <input type="text" class="form-control saida-final">
+          </div>
+        </div>
+      </div>
+      <button type="button" class="btn btn-sm btn-primary" onclick="transferirTrocaMonitor(this)">Transferir</button>
+    `;
+    container.appendChild(div);
+  }
+
   function transferirTrocaJogo(botao) {
     const form = botao.closest('.troca-jogo-form');
     const container = botao.closest('.execucao-bloco');
@@ -400,7 +424,6 @@ Saída : ${saidaInicial}`;
 
     const anterior = form.querySelector('.entrada-final').value;
     const atual = form.querySelector('.saida-final').value;
-
     const texto = `TROCA DE COLETOR
 SN.: ${anterior}
 SN.: ${atual}`;
@@ -423,6 +446,19 @@ SN.: ${atual}`;
     const textarea = container.querySelector("textarea");
     textarea.value += (textarea.value ? "\n\n" : "") + texto;
 
+    form.remove();
+  }
+
+  function transferirTrocaMonitor(botao) {
+    const form = botao.closest('.troca-jogo-form');
+    const container = botao.closest('.execucao-bloco');
+
+    const anterior = form.querySelector('.entrada-final').value;
+    const atual = form.querySelector('.saida-final').value;
+    const texto = `TROCA DO MONITOR\nRet.: MT.: ${anterior}\nRep.: MT.: ${atual}`;
+    const textarea = container.querySelector("textarea");
+
+    textarea.value += (textarea.value ? "\n\n" : "") + texto;
     form.remove();
   }
 
